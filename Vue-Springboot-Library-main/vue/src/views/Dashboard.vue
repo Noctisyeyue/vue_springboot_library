@@ -18,7 +18,7 @@
     <div id="main" style="margin-left: 5px"></div>
   </div>
 </template>
-
+ 
 <script>
 import * as echarts from 'echarts'
 import {ElMessage} from "element-plus";

@@ -191,3 +191,18 @@ CREATE TABLE `book_collection` (
    PRIMARY KEY (`id`) USING BTREE,
    UNIQUE INDEX `uk_user_book` (`user_id`, `book_id`) USING BTREE COMMENT '同一用户同一本书只能收藏一次'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '图书收藏表' ROW_FORMAT = Dynamic;
+
+-- 创建访问统计表
+-- ----------------------------
+-- Table structure for visit_stats
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `visit_stats` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
+    `total_visits` BIGINT NOT NULL DEFAULT 0 COMMENT '总访问量'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='访问统计表';
+
+-- 插入初始记录（从0开始统计）
+INSERT IGNORE INTO `visit_stats` (`id`, `total_visits`) VALUES (1, 0);
+
+-- 如果要从旧的内存版本迁移数据，可以手动设置初始值
+-- UPDATE `visit_stats` SET `total_visits` = [当前访问量] WHERE `id` = 1;

@@ -48,7 +48,7 @@ public class UserController {
         String token = TokenUtils.genToken(res);
         res.setToken(token);
         LoginUser loginuser = new LoginUser();
-        loginuser.  addVisitCount();
+        loginuser.addVisitCount();
         return Result.success(res);
     }
     @PostMapping
