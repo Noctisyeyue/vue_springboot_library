@@ -77,8 +77,8 @@ CREATE TABLE `bookwithuser` (
     `isbn` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图书编号',
     `book_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图书名',
     `nick_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '读者姓名',
-    `lendtime` DATETIME NULL DEFAULT NULL COMMENT '借阅时间',
-    `deadtime` DATETIME NULL DEFAULT NULL COMMENT '应归还时间',
+    `lend_time` DATETIME NULL DEFAULT NULL COMMENT '借阅时间',
+    `dead_time` DATETIME NULL DEFAULT NULL COMMENT '应归还时间',
     `prolong` INT NULL DEFAULT NULL COMMENT '续借次数',
     PRIMARY KEY (`record_id`) USING BTREE,
     INDEX `idx_reader_id`(`reader_id`) USING BTREE,--可以不要

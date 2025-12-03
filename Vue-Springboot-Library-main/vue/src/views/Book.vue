@@ -174,8 +174,8 @@
         <el-table :data="outDateBook" style="width: 100%">
           <el-table-column prop="isbn" label="图书编号" />
           <el-table-column prop="bookName" label="书名" />
-          <el-table-column prop="lendtime" label="借阅日期" />
-          <el-table-column prop="deadtime" label="截至日期" />
+          <el-table-column prop="lendTime" label="借阅日期" />  
+          <el-table-column prop="deadTime" label="截至日期" />  
         </el-table>
 
       <template #footer>
@@ -358,13 +358,13 @@ export default {
             this.isbnArray = [];
             for (let i = 0; i < this.number; i++) {
               this.isbnArray[i] = this.bookData[i].isbn;
-              let dDate = new Date(this.bookData[i].deadtime);
+              let dDate = new Date(this.bookData[i].deadTime);  
               if (dDate < nowDate) {
                 this.outDateBook.push({
                   isbn: this.bookData[i].isbn,
                   bookName: this.bookData[i].bookName,
-                  deadtime: this.bookData[i].deadtime,
-                  lendtime: this.bookData[i].lendtime,
+                  deadTime: this.bookData[i].deadTime,  
+                  lendTime: this.bookData[i].lendTime,  
                 });
                 this.numOfOutDataBook++;
               }
@@ -447,8 +447,8 @@ export default {
           form3.bookName = row.name;
           form3.nickName = this.user.username;
           form3.readerId = this.user.id;
-          form3.lendtime = endDate;
-          form3.deadtime = endDate;
+          form3.lendTime = endDate;  
+          form3.deadTime = endDate;  
           form3.prolong  = 1;
           request.post("/bookwithuser/deleteRecord",form3).then(res =>{
             console.log(res)
@@ -480,10 +480,10 @@ export default {
       form3.bookName = row.name;
       form3.nickName = this.user.username;
       form3.readerId = this.user.id;
-      form3.lendtime = startDate;
+      form3.lendTime = startDate;  
       let nowDate = new Date(startDate);
       nowDate.setDate(nowDate.getDate()+30);
-      form3.deadtime = moment(nowDate).format("yyyy-MM-DD HH:mm:ss");
+      form3.deadTime = moment(nowDate).format("yyyy-MM-DD HH:mm:ss"); 
       form3.prolong  = 1;
       
       // 先检查是否已借阅该书

@@ -18,8 +18,8 @@ public class BookWithUser {
     private String bookName;
     private String nickName;
     @JsonFormat(locale="zh",timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
-    private Date lendtime;
+    private Date lendTime;
     @JsonFormat(locale="zh",timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
-    private Date deadtime;
+    private Date deadTime;
     private Integer prolong;
 }
