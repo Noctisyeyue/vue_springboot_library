@@ -31,7 +31,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 --   `publisher` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '出版社',
 --   `create_time` date NULL DEFAULT NULL COMMENT '出版时间',
 --   `status` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '0：未归还 1：已归还',
---   `borrownum` int(0) NOT NULL COMMENT '此书被借阅次数',
+--   `borrow_num` int(0) NOT NULL COMMENT '此书被借阅次数',
 --   PRIMARY KEY (`id`) USING BTREE
 -- ) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -47,9 +47,10 @@ CREATE TABLE `book`  (
      `publisher` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '出版社',
      `create_time` date NULL DEFAULT NULL COMMENT '出版时间',
      `status` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '0：不可借阅 1：可借阅',
-     `borrownum` int(0) NOT NULL DEFAULT 0 COMMENT '此书被借阅次数',
+     `borrow_num` int(0) NOT NULL DEFAULT 0 COMMENT '此书被借阅次数',
      `total_quantity` int(0) NOT NULL DEFAULT 1 COMMENT '图书总数量',
      `borrowed_quantity` int(0) NOT NULL DEFAULT 0 COMMENT '已借阅数量',
+     `image` varchar(255) DEFAULT NULL COMMENT '图书封面照片URL或路径',
      PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -100,7 +101,7 @@ CREATE TABLE `lend_record`  (
   `lend_time` datetime(0) NULL DEFAULT NULL COMMENT '借书日期',
   `return_time` datetime(0) NULL DEFAULT NULL COMMENT '还书日期',
   `status` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '0：未归还 1：已归还',
-  `borrownum` int(0) NOT NULL COMMENT '此书被借阅次数'
+  `borrow_num` int(0) NOT NULL COMMENT '此书被借阅次数'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------

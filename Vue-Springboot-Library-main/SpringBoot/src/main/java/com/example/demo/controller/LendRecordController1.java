@@ -23,7 +23,7 @@ public class LendRecordController1 {
     @PutMapping
     public  Result<?> update2( @RequestBody LendRecord lendRecord){
         UpdateWrapper<LendRecord> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("isbn",lendRecord.getIsbn()).eq("reader_id",lendRecord.getReaderId()).eq("borrownum",lendRecord.getBorrownum());
+        updateWrapper.eq("isbn",lendRecord.getIsbn()).eq("reader_id",lendRecord.getReaderId()).eq("borrow_num",lendRecord.getBorrowNum()); // 修改字段名：borrownum -> borrow_num
         LendRecord lendrecord = new LendRecord();
         lendrecord.setReturnTime(lendRecord.getReturnTime());
         lendrecord.setStatus(lendRecord.getStatus());

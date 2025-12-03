@@ -149,7 +149,7 @@
           </el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="累计借阅次数" label-class-name="detail-label">
-          {{ detailBook.borrownum || 0 }} 次
+          {{ detailBook.borrowNum || 0 }} 次
         </el-descriptions-item>
         <el-descriptions-item label="当前状态" label-class-name="detail-label">
           <el-tag v-if="getAvailableQuantity(detailBook) <= 0" type="warning">不可借阅</el-tag>
@@ -439,7 +439,7 @@ export default {
         let endDate = moment(new Date()).format("yyyy-MM-DD HH:mm:ss")
         this.form3.returnTime = endDate
         this.form3.status = "1"
-        this.form3.borrownum = row.borrownum
+        this.form3.borrowNum = row.borrowNum 
         request.put("/LendRecord1/",this.form3).then(res =>{
           console.log(res)
           let form3 ={};
@@ -498,7 +498,7 @@ export default {
         
         // 借阅成功，继续更新图书信息
         this.form.id = row.id
-        this.form.borrownum = (row.borrownum || 0) + 1
+        this.form.borrowNum = (row.borrowNum || 0) + 1 
         this.form.borrowedQuantity = (row.borrowedQuantity || 0) + 1
         
         request.put("/book", this.form).then(bookRes =>{
@@ -510,7 +510,7 @@ export default {
             this.form2.isbn = row.isbn
             this.form2.bookname = row.name
             this.form2.readerId = this.user.id
-            this.form2.borrownum = (row.borrownum || 0) + 1
+            this.form2.borrowNum = (row.borrowNum || 0) + 1 
             this.form2.lendTime = startDate
             
             request.post("/LendRecord", this.form2).then(() =>{
@@ -551,7 +551,7 @@ export default {
       }
       else {
         // 新增图书时初始化字段
-        this.form.borrownum = 0
+        this.form.borrowNum = 0 
         this.form.borrowedQuantity = 0
         this.form.totalQuantity = this.form.totalQuantity || 1
         this.form.status = 1

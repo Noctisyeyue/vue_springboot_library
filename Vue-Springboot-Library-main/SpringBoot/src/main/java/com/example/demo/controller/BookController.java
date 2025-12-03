@@ -23,8 +23,8 @@ public class BookController {
     public Result<?> save(@RequestBody Book book){
         // 新增图书时初始化字段
         // 如果前端没有传来“被借阅次数”，就默认为 0
-        if(book.getBorrownum() == null){
-            book.setBorrownum(0);
+        if(book.getBorrowNum() == null){
+            book.setBorrowNum(0);
         }
         // 如果没有传来“当前已借出数量”，也默认为 0
         if(book.getBorrowedQuantity() == null){

@@ -37,7 +37,7 @@ public class LendRecordController {
     public  Result<?> deleteRecord(@RequestBody LendRecord LendRecord){
         Map<String,Object> map = new HashMap<>();
         map.put("isbn",LendRecord.getIsbn());
-        map.put("borrownum",LendRecord.getBorrownum());
+        map.put("borrow_num",LendRecord.getBorrowNum());
         LendRecordMapper.deleteByMap(map);
         return Result.success();
     }
@@ -48,7 +48,7 @@ public class LendRecordController {
             LendRecord curRecord = LendRecords.get(i);
             Map<String,Object> map = new HashMap<>();
             map.put("isbn",curRecord.getIsbn());
-            map.put("borrownum",curRecord.getBorrownum());
+            map.put("borrow_num",curRecord.getBorrowNum());
             LendRecordMapper.deleteByMap(map);
         }
         return Result.success();
