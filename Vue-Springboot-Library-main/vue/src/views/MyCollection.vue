@@ -147,7 +147,7 @@ export default {
         params: {
           pageNum: this.currentPage,
           pageSize: this.pageSize,
-          userId: this.user.id,
+          readerId: this.user.id,
           search: this.search
         }
       }).then(res => {

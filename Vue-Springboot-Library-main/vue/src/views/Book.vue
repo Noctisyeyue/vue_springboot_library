@@ -374,7 +374,7 @@ export default {
           // 2.2 获取用户的收藏列表，并更新 tableData
           request.get("/bookCollection", {
             params: {
-              userId: this.user.id,
+              readerId: this.user.id,
               pageNum: 1,
               pageSize: 1000 // 获取全部收藏
             }
@@ -446,7 +446,7 @@ export default {
           form3.isbn = row.isbn;
           form3.bookName = row.name;
           form3.nickName = this.user.username;
-          form3.id = this.user.id;
+          form3.readerId = this.user.id;
           form3.lendtime = endDate;
           form3.deadtime = endDate;
           form3.prolong  = 1;
@@ -479,7 +479,7 @@ export default {
       form3.isbn = row.isbn;
       form3.bookName = row.name;
       form3.nickName = this.user.username;
-      form3.id = this.user.id;
+      form3.readerId = this.user.id;
       form3.lendtime = startDate;
       let nowDate = new Date(startDate);
       nowDate.setDate(nowDate.getDate()+30);
@@ -588,7 +588,7 @@ export default {
     // 点击收藏按钮时触发
     toggleCollection(row) {
       const params = {
-        userId: this.user.id,
+        readerId: this.user.id,
         bookId: row.id,
       };
 
@@ -612,7 +612,7 @@ export default {
       } else {
         // 当前是“未收藏”，调用“添加收藏”接口
         const data = {
-            userId: this.user.id,
+            readerId: this.user.id,
             bookId: row.id
         };
         request.post("/bookCollection/add", data)

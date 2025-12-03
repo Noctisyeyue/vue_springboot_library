@@ -72,7 +72,7 @@ INSERT INTO `book` VALUES (15, '54112312321', '格林童话', NULL, NULL, NULL, 
 
 CREATE TABLE `bookwithuser` (
     `record_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '借阅记录ID（主键）',
-    `id` BIGINT NOT NULL COMMENT '读者id',
+    `reader_id` BIGINT NOT NULL COMMENT '读者id',
     `isbn` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图书编号',
     `book_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图书名',
     `nick_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '读者姓名',
@@ -80,7 +80,7 @@ CREATE TABLE `bookwithuser` (
     `deadtime` DATETIME NULL DEFAULT NULL COMMENT '应归还时间',
     `prolong` INT NULL DEFAULT NULL COMMENT '续借次数',
     PRIMARY KEY (`record_id`) USING BTREE,
-    INDEX `idx_reader_id`(`id`) USING BTREE,--可以不要
+    INDEX `idx_reader_id`(`reader_id`) USING BTREE,--可以不要
     INDEX `idx_isbn`(`isbn`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 -- ----------------------------
@@ -182,15 +182,15 @@ CREATE TABLE `user`  (
 DROP TABLE IF EXISTS `book_collection`;
 CREATE TABLE `book_collection` (
    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '收藏记录ID',
-   `user_id` BIGINT NOT NULL COMMENT '用户ID',
+   `reader_id` BIGINT NOT NULL COMMENT '读者ID',
    `book_id` BIGINT NOT NULL COMMENT '图书ID',
    `isbn` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图书ISBN',
    `book_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图书名称',
    `author` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '作者',
    `collection_time` DATETIME NULL DEFAULT CURRENT_TIMESTAMP COMMENT '收藏时间',
    PRIMARY KEY (`id`) USING BTREE,
-   UNIQUE INDEX `uk_user_book` (`user_id`, `book_id`) USING BTREE COMMENT '同一用户同一本书只能收藏一次'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '图书收藏表' ROW_FORMAT = Dynamic;
+   UNIQUE INDEX `uk_user_book` (`reader_id`, `book_id`) USING BTREE COMMENT '同一用户同一本书只能收藏一次'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT = '图书收藏表' ROW_FORMAT = Dynamic;
 
 -- 创建访问统计表
 -- ----------------------------

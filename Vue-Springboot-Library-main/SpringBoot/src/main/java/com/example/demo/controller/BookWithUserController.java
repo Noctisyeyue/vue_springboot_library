@@ -27,7 +27,7 @@ public class BookWithUserController {
     public Result<?> insertNew(@RequestBody BookWithUser bookWithUser){
         // 检查该用户是否已经借阅了相同ISBN的书   查询“某个用户”借阅了“某本特定书”的记录
         LambdaQueryWrapper<BookWithUser> queryWrapper = Wrappers.<BookWithUser>lambdaQuery()
-                .eq(BookWithUser::getId, bookWithUser.getId())
+                .eq(BookWithUser::getReaderId, bookWithUser.getReaderId())
                 .eq(BookWithUser::getIsbn, bookWithUser.getIsbn());
 
         long count = bookWithUserMapper.selectCount(queryWrapper);//去数据库里查询有多少条符合条件的记录，并返回数量
@@ -43,7 +43,7 @@ public class BookWithUserController {
     public Result<?> update(@RequestBody BookWithUser bookWithUser){
         LambdaUpdateWrapper<BookWithUser> updateWrapper = Wrappers.<BookWithUser>lambdaUpdate()
                 .eq(BookWithUser::getIsbn, bookWithUser.getIsbn())
-                .eq(BookWithUser::getId, bookWithUser.getId());
+                .eq(BookWithUser::getReaderId, bookWithUser.getReaderId());
 
         bookWithUserMapper.update(bookWithUser, updateWrapper);
         return Result.success();
@@ -56,7 +56,7 @@ public class BookWithUserController {
     public Result<?> deleteRecord(@RequestBody BookWithUser bookWithUser){
         LambdaQueryWrapper<BookWithUser> queryWrapper = Wrappers.<BookWithUser>lambdaQuery()
                 .eq(BookWithUser::getIsbn, bookWithUser.getIsbn())
-                .eq(BookWithUser::getId, bookWithUser.getId());
+                .eq(BookWithUser::getReaderId, bookWithUser.getReaderId());
 
         bookWithUserMapper.delete(queryWrapper);
         return Result.success();
@@ -70,7 +70,7 @@ public class BookWithUserController {
         for(BookWithUser record : bookWithUsers) {
             LambdaQueryWrapper<BookWithUser> queryWrapper = Wrappers.<BookWithUser>lambdaQuery()
                     .eq(BookWithUser::getIsbn, record.getIsbn())
-                    .eq(BookWithUser::getId, record.getId());
+                    .eq(BookWithUser::getReaderId, record.getReaderId());
             bookWithUserMapper.delete(queryWrapper);
         }
         return Result.success();
@@ -90,7 +90,7 @@ public class BookWithUserController {
             wrappers.like(BookWithUser::getBookName, search2);
         }
         if(StringUtils.isNotBlank(search3)){
-            wrappers.like(BookWithUser::getId, search3);
+            wrappers.like(BookWithUser::getReaderId, search3);
         }
         Page<BookWithUser> bookPage = bookWithUserMapper.selectPage(new Page<>(pageNum, pageSize), wrappers);
         return Result.success(bookPage);

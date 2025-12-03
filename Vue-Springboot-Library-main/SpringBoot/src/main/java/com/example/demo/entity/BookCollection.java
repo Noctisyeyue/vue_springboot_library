@@ -13,7 +13,7 @@ import java.util.Date;
 public class BookCollection {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private Long userId;
+    private Long readerId;
     private Long bookId;
     private String isbn;
     private String bookName;

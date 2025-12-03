@@ -13,14 +13,14 @@ import javax.annotation.Resource;
 public class LoginUser {
 
     @Resource
-    private VisitStatsMapper visitStatsMapper;
+    private VisitStatsMapper visitStatsMapper;  //非静态依赖
 
-    private static LoginUser loginUser;
+    private static LoginUser loginUser; //静态引用
 
     // 备用：内存中的访问量（数据库不可用时使用）
     private static int backupVisitCount = 0;
 
-    @PostConstruct
+    @PostConstruct  //在依赖注入完成后自动执行
     public void init() {
         loginUser = this;
         // 初始化数据库记录（如果不存在）

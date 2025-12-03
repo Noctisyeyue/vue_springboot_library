@@ -13,7 +13,7 @@ import java.util.Date;
 public class BookWithUser {
     @TableId(type = IdType.AUTO)
     private Long recordId;  // 自增主键
-    private Long id;        // 读者ID
+    private Long readerId;   // 读者ID
     private String isbn;
     private String bookName;
     private String nickName;

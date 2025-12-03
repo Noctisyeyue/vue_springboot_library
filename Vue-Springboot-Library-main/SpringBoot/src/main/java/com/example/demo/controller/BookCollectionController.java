@@ -30,7 +30,7 @@ public class BookCollectionController {
     public Result<?> addCollection(@RequestBody BookCollection bookCollection){
         // 检查是否已收藏
         LambdaQueryWrapper<BookCollection> queryWrapper = Wrappers.<BookCollection>lambdaQuery()
-                .eq(BookCollection::getUserId, bookCollection.getUserId())
+                .eq(BookCollection::getReaderId, bookCollection.getReaderId())
                 .eq(BookCollection::getBookId, bookCollection.getBookId());
 
         long count = bookCollectionMapper.selectCount(queryWrapper);
@@ -57,9 +57,9 @@ public class BookCollectionController {
      * 取消收藏
      */
     @DeleteMapping("/cancel")
-    public Result<?> cancelCollection(@RequestParam Long userId, @RequestParam Long bookId){
+    public Result<?> cancelCollection(@RequestParam Long readerId, @RequestParam Long bookId){
         LambdaQueryWrapper<BookCollection> queryWrapper = Wrappers.<BookCollection>lambdaQuery()
-                .eq(BookCollection::getUserId, userId)
+                .eq(BookCollection::getReaderId, readerId)
                 .eq(BookCollection::getBookId, bookId);
 
         bookCollectionMapper.delete(queryWrapper);
@@ -70,9 +70,9 @@ public class BookCollectionController {
      * 检查是否已收藏
      */
     @GetMapping("/checkCollection")
-    public Result<?> checkCollection(@RequestParam Long userId, @RequestParam Long bookId){
+    public Result<?> checkCollection(@RequestParam Long readerId, @RequestParam Long bookId){
         LambdaQueryWrapper<BookCollection> queryWrapper = Wrappers.<BookCollection>lambdaQuery()
-                .eq(BookCollection::getUserId, userId)
+                .eq(BookCollection::getReaderId, readerId)
                 .eq(BookCollection::getBookId, bookId);
 
         long count = bookCollectionMapper.selectCount(queryWrapper);
@@ -85,10 +85,10 @@ public class BookCollectionController {
     @GetMapping
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNum,
                               @RequestParam(defaultValue = "10") Integer pageSize,
-                              @RequestParam Long userId,
+                              @RequestParam Long readerId,
                               @RequestParam(defaultValue = "") String search){
         LambdaQueryWrapper<BookCollection> wrapper = Wrappers.<BookCollection>lambdaQuery()
-                .eq(BookCollection::getUserId, userId)
+                .eq(BookCollection::getReaderId, readerId)
                 .orderByDesc(BookCollection::getCollectionTime);
 
         // 搜索功能：书名或作者
