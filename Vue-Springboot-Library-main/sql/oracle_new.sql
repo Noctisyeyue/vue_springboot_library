@@ -174,6 +174,12 @@ INSERT INTO book_collection (id, reader_id, book_id, collection_time) VALUES (10
 -- 插入访问统计数据
 INSERT INTO visit_stats (id, total_visits) VALUES (1, 50);
 
--- 9. 提交事务
+-- 9. 重置所有自增序列的起始值，避免主键冲突
+ALTER TABLE "user" MODIFY id GENERATED AS IDENTITY (START WITH 6);
+ALTER TABLE book MODIFY id GENERATED AS IDENTITY (START WITH 11);
+ALTER TABLE bookwithuser MODIFY record_id GENERATED AS IDENTITY (START WITH 4);
+ALTER TABLE book_collection MODIFY id GENERATED AS IDENTITY (START WITH 11);
+
+-- 10. 提交事务
 COMMIT;
 
