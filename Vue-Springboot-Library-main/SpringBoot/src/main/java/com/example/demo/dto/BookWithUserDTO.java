@@ -1,0 +1,31 @@
+package com.example.demo.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+
+import java.util.Date;
+
+// 借阅记录DTO - 包含关联查询的图书信息和用户信息
+//把从多个表查询的数据包装成一个对象，方便返回给前端
+@Data
+public class BookWithUserDTO {
+    private Long recordId;     // 借阅记录ID
+    private Long readerId;     // 读者ID
+    private Long bookId;       // 图书ID
+
+    // 图书信息（从book表关联查询）
+    private String isbn;       // 图书编号
+    private String bookName;   // 图书名称
+    private String author;     // 作者
+    private String publisher;  // 出版社
+
+    // 用户信息（从user表关联查询）
+    private String nickName;   // 读者姓名
+
+    // 借阅信息
+    @JsonFormat(locale="zh",timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
+    private Date lendTime;     // 借阅时间
+    @JsonFormat(locale="zh",timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
+    private Date deadTime;     // 应归还时间
+    private Integer prolong;   // 续借次数
+}
