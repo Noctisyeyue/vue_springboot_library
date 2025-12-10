@@ -6,6 +6,8 @@ import com.example.demo.dto.LendRecordDTO;
 import com.example.demo.entity.LendRecord;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import java.util.Date;
 
 public interface LendRecordMapper extends BaseMapper<LendRecord> {
 
@@ -18,7 +20,7 @@ public interface LendRecordMapper extends BaseMapper<LendRecord> {
      * @return 借阅历史记录DTO列表
      */
     @Select("SELECT " +
-            "l.reader_id, l.book_id, l.lend_time, l.return_time, " +
+            "l.reader_id, l.book_id, l.lend_time, l.return_time, l.status, " +
             "b.isbn, b.name as bookName, b.author, b.publisher, " +
             "u.nick_name " +
             "FROM lend_record l " +
@@ -31,4 +33,20 @@ public interface LendRecordMapper extends BaseMapper<LendRecord> {
                                            @Param("bookId") String bookId,
                                            @Param("bookName") String bookName,
                                            @Param("readerId") String readerId);
+
+    /**
+     * 归还图书：更新借阅记录的归还时间
+     * 使用原生SQL避免Oracle TIMESTAMP类型转换问题
+     * @param readerId 读者ID
+     * @param bookId 图书ID
+     * @param lendTime 借阅时间
+     * @param returnTime 归还时间
+     * @return 更新结果
+     */
+    @Update("UPDATE lend_record SET return_time = #{returnTime}, status = '1' " +
+            "WHERE reader_id = #{readerId} AND book_id = #{bookId} AND lend_time = #{lendTime}")
+    int updateReturnTime(@Param("readerId") Long readerId,
+                        @Param("bookId") Long bookId,
+                        @Param("lendTime") Date lendTime,
+                        @Param("returnTime") Date returnTime);
 }

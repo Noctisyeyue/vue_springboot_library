@@ -142,24 +142,22 @@ INSERT INTO book (id, isbn, name, price, author, publisher, create_time, status,
 INSERT INTO book (id, isbn, name, price, author, publisher, create_time, status, borrow_num, total_quantity, borrowed_quantity) VALUES (9, '9787506347168', '小王子', 22.00, '安托万·德·圣埃克苏佩里', '人民文学出版社', TO_DATE('2003-08-01', 'YYYY-MM-DD'), '1', 25, 20, 5);
 INSERT INTO book (id, isbn, name, price, author, publisher, create_time, status, borrow_num, total_quantity, borrowed_quantity) VALUES (10, '9787544217686', '追风筝的人', 36.00, '卡勒德·胡赛尼', '上海人民出版社', TO_DATE('2013-05-01', 'YYYY-MM-DD'), '1', 11, 8, 1);
 
--- 插入当前借阅数据
-INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (1, 2, 1, TO_TIMESTAMP('2024-12-01 10:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-15 10:30:00', 'YYYY-MM-DD HH24:MI:SS'), 0);
-INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (2, 2, 5, TO_TIMESTAMP('2024-12-01 10:35:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-15 10:35:00', 'YYYY-MM-DD HH24:MI:SS'), 1);
-INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (3, 3, 6, TO_TIMESTAMP('2024-12-02 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-16 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), 0);
-INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (4, 4, 8, TO_TIMESTAMP('2024-12-03 09:15:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-17 09:15:00', 'YYYY-MM-DD HH24:MI:SS'), 0);
-INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (5, 5, 10, TO_TIMESTAMP('2024-12-03 16:45:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-17 16:45:00', 'YYYY-MM-DD HH24:MI:SS'), 2);
+-- 插入当前借阅数据（仅存储未还书的记录）
+INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (1, 3, 6, TO_TIMESTAMP('2024-12-02 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-16 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), 0);
+INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (2, 4, 8, TO_TIMESTAMP('2024-12-03 09:15:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-17 09:15:00', 'YYYY-MM-DD HH24:MI:SS'), 0);
+INSERT INTO bookwithuser (record_id, reader_id, book_id, lend_time, dead_time, prolong) VALUES (3, 5, 10, TO_TIMESTAMP('2024-12-03 16:45:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-17 16:45:00', 'YYYY-MM-DD HH24:MI:SS'), 2);
 
--- 插入借阅历史数据（注意：Oracle版本已移除status字段，符合3NF）
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (2, 1, TO_TIMESTAMP('2024-11-01 10:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-15 14:20:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (2, 2, TO_TIMESTAMP('2024-10-15 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-10-29 16:30:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (2, 5, TO_TIMESTAMP('2024-11-10 11:15:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-24 10:45:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (3, 3, TO_TIMESTAMP('2024-11-05 14:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-19 15:20:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (3, 6, TO_TIMESTAMP('2024-12-02 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), NULL);
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (4, 4, TO_TIMESTAMP('2024-11-20 08:45:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-04 09:30:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (4, 7, TO_TIMESTAMP('2024-10-25 13:15:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-08 14:00:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (4, 8, TO_TIMESTAMP('2024-12-03 09:15:00', 'YYYY-MM-DD HH24:MI:SS'), NULL);
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (5, 9, TO_TIMESTAMP('2024-11-08 15:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-22 16:15:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO lend_record (reader_id, book_id, lend_time, return_time) VALUES (5, 10, TO_TIMESTAMP('2024-12-03 16:45:00', 'YYYY-MM-DD HH24:MI:SS'), NULL);
+-- 插入借阅历史数据（包含所有历史记录，已还和未还）
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (2, 1, TO_TIMESTAMP('2024-11-01 10:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-15 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), '1');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (2, 2, TO_TIMESTAMP('2024-10-15 09:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-10-29 16:30:00', 'YYYY-MM-DD HH24:MI:SS'), '1');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (2, 5, TO_TIMESTAMP('2024-11-10 11:15:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-24 10:45:00', 'YYYY-MM-DD HH24:MI:SS'), '1');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (3, 3, TO_TIMESTAMP('2024-11-05 14:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-19 15:20:00', 'YYYY-MM-DD HH24:MI:SS'), '1');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (3, 6, TO_TIMESTAMP('2024-12-02 14:20:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, '0');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (4, 4, TO_TIMESTAMP('2024-11-20 08:45:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-12-04 09:30:00', 'YYYY-MM-DD HH24:MI:SS'), '1');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (4, 7, TO_TIMESTAMP('2024-10-25 13:15:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-08 14:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (4, 8, TO_TIMESTAMP('2024-12-03 09:15:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, '0');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (5, 9, TO_TIMESTAMP('2024-11-08 15:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-11-22 16:15:00', 'YYYY-MM-DD HH24:MI:SS'), '1');
+INSERT INTO lend_record (reader_id, book_id, lend_time, return_time, status) VALUES (5, 10, TO_TIMESTAMP('2024-12-03 16:45:00', 'YYYY-MM-DD HH24:MI:SS'), NULL, '0');
 
 -- 插入收藏数据
 INSERT INTO book_collection (id, reader_id, book_id, collection_time) VALUES (1, 2, 1, TO_TIMESTAMP('2024-11-01 11:00:00', 'YYYY-MM-DD HH24:MI:SS'));
