@@ -2,6 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/Vue-Springboot-Library-main/sql/library_3nf.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/Vue-Springboot-Library-main/sql/oracle_new.sql" dialect="Oracle" />
     <file url="file://$PROJECT_DIR$/Vue-Springboot-Library-main/sql/springboot-vue.sql" dialect="MySQL" />
   </component>
 </project>

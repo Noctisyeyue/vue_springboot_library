@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.Map;
 
-@TableName("user")
+@TableName("\"user\"")
 @Data
 public class User {
     @TableId (type = IdType.AUTO)
@@ -20,7 +20,7 @@ public class User {
     private String sex;
     private String address;
     private String phone;
-    @TableField(exist = false)  //表中没有token不会报错仍能编译运行
+    @TableField(exist = false)  //表中没有token不会报错仍能编译运行   用户登录成功后，将JWT token存入此字段
     private String token;
     private Integer role;
 

@@ -175,6 +175,6 @@ INSERT INTO `book_collection` (`id`, `reader_id`, `book_id`, `collection_time`) 
 -- ----------------------------
 -- Records of visit_stats (访问统计数据)
 -- ----------------------------
-INSERT INTO `visit_stats` (`id`, `total_visits`) VALUES (1, 1250);
+INSERT INTO `visit_stats` (`id`, `total_visits`) VALUES (1, 50);
 
 SET FOREIGN_KEY_CHECKS = 1;
