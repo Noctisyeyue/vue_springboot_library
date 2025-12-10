@@ -50,7 +50,6 @@ CREATE TABLE `book`  (
      `borrow_num` int(0) NOT NULL DEFAULT 0 COMMENT '此书被借阅次数',
      `total_quantity` int(0) NOT NULL DEFAULT 1 COMMENT '图书总数量',
      `borrowed_quantity` int(0) NOT NULL DEFAULT 0 COMMENT '已借阅数量',
-     `image` varchar(255) DEFAULT NULL COMMENT '图书封面照片URL或路径',
      PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -58,19 +57,19 @@ CREATE TABLE `book`  (
 -- ----------------------------
 -- Records of book
 -- ----------------------------
-INSERT INTO `book` VALUES (9, '12341541321', '十万个为什么', 15.00, '小王', '宁波大学出版社', '2014-12-16', '1', 7);
-INSERT INTO `book` VALUES (10, '2312315132131', '五万个为什么', NULL, NULL, NULL, NULL, '1', 3);
-INSERT INTO `book` VALUES (11, '25213121232', '一万个为什么', NULL, NULL, NULL, NULL, '1', 5);
-INSERT INTO `book` VALUES (12, '3213123123', '操作系统', NULL, NULL, NULL, NULL, '0', 8);
-INSERT INTO `book` VALUES (13, '345621212321', '伊索寓言', NULL, NULL, NULL, NULL, '0', 9);
-INSERT INTO `book` VALUES (15, '54112312321', '格林童话', NULL, NULL, NULL, NULL, '1', 1);
+INSERT INTO `book` VALUES (9, '12341541321', '十万个为什么', 15.00, '小王', '宁波大学出版社', '2014-12-16', '1', 7,5,0);
+INSERT INTO `book` VALUES (10, '2312315132131', '五万个为什么', NULL, NULL, NULL, NULL, '1', 3,6,0);
+INSERT INTO `book` VALUES (11, '25213121232', '一万个为什么', NULL, NULL, NULL, NULL, '1', 5,7,0);
+INSERT INTO `book` VALUES (12, '3213123123', '操作系统', NULL, NULL, NULL, NULL, '0', 8,4,0);
+INSERT INTO `book` VALUES (13, '345621212321', '伊索寓言', NULL, NULL, NULL, NULL, '0', 9,7,0);
+INSERT INTO `book` VALUES (15, '54112312321', '格林童话', NULL, NULL, NULL, NULL, '1', 1,8,0);
 
 -- ----------------------------
 -- Table structure for bookwithuser
 -- ----------------------------
 
 --new
-
+DROP TABLE IF EXISTS `bookwithuser`;
 CREATE TABLE `bookwithuser` (
     `record_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '借阅记录ID（主键）',
     `reader_id` BIGINT NOT NULL COMMENT '读者id',
@@ -81,15 +80,14 @@ CREATE TABLE `bookwithuser` (
     `dead_time` DATETIME NULL DEFAULT NULL COMMENT '应归还时间',
     `prolong` INT NULL DEFAULT NULL COMMENT '续借次数',
     PRIMARY KEY (`record_id`) USING BTREE,
-    INDEX `idx_reader_id`(`reader_id`) USING BTREE,--可以不要
+    INDEX `idx_reader_id`(`reader_id`) USING BTREE,
     INDEX `idx_isbn`(`isbn`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 -- ----------------------------
 -- Records of bookwithuser
 -- ----------------------------
-INSERT INTO `bookwithuser` VALUES (14, '345621212321', '伊索寓言', '123456', '2021-12-22 17:30:48', '2022-02-20 17:30:48', 0);
-INSERT INTO `bookwithuser` VALUES (14, '3213123123', '操作系统', '123456', '2021-10-12 17:30:42', '2021-12-14 17:30:42', 1);
-
+INSERT INTO `bookwithuser` VALUES (1,14, '345621212321', '伊索寓言', '小明', '2021-12-22 17:30:48', '2022-02-20 17:30:48', 0);
+INSERT INTO `bookwithuser` VALUES (2,14, '3213123123', '操作系统', '小张', '2021-10-12 17:30:42', '2021-12-14 17:30:42', 1);
 -- ----------------------------
 -- Table structure for lend_record
 -- ----------------------------
