@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.commom.Result;
+import com.example.demo.dto.BookCollectionDTO;
 import com.example.demo.entity.Book;
 import com.example.demo.entity.BookCollection;
 import com.example.demo.mapper.BookCollectionMapper;
@@ -38,15 +38,13 @@ public class BookCollectionController {
             return Result.error("您已收藏该图书");
         }
 
-        // 获取图书完整信息
+        // 检查图书是否存在
         Book book = bookMapper.selectById(bookCollection.getBookId());
         if(book == null){
             return Result.error("图书不存在");
         }
 
-        bookCollection.setIsbn(book.getIsbn());
-        bookCollection.setBookName(book.getName());
-        bookCollection.setAuthor(book.getAuthor());
+        // 设置收藏时间
         bookCollection.setCollectionTime(new Date());
 
         bookCollectionMapper.insert(bookCollection);
@@ -80,26 +78,16 @@ public class BookCollectionController {
     }
 
     /**
-     * 获取用户收藏列表（分页）
+     * 获取用户收藏列表（分页，多表关联查询）
      */
     @GetMapping
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNum,
                               @RequestParam(defaultValue = "10") Integer pageSize,
                               @RequestParam Long readerId,
                               @RequestParam(defaultValue = "") String search){
-        LambdaQueryWrapper<BookCollection> wrapper = Wrappers.<BookCollection>lambdaQuery()
-                .eq(BookCollection::getReaderId, readerId)
-                .orderByDesc(BookCollection::getCollectionTime);
 
-        // 搜索功能：书名或作者
-        if(StringUtils.isNotBlank(search)){
-            wrapper.and(w -> w.like(BookCollection::getBookName, search)
-                    .or()
-                    .like(BookCollection::getAuthor, search));
-        }
-
-        Page<BookCollection> collectionPage = bookCollectionMapper.selectPage(
-                new Page<>(pageNum, pageSize), wrapper);
+        Page<BookCollectionDTO> collectionPage = bookCollectionMapper.findPageWithBookDetails(
+                new Page<>(pageNum, pageSize), readerId, search);
         return Result.success(collectionPage);
     }
 

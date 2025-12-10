@@ -1,103 +1,69 @@
 package com.example.demo.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.commom.Result;
-import com.example.demo.entity.Book;
-import com.example.demo.entity.LendRecord;
-import com.example.demo.entity.LendRecord;
+import com.example.demo.dto.LendRecordDTO;
 import com.example.demo.entity.LendRecord;
 import com.example.demo.mapper.LendRecordMapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 //借阅历史记录
 @RestController
 @RequestMapping("/LendRecord")
 public class LendRecordController {
     @Resource
-    LendRecordMapper LendRecordMapper;
+    LendRecordMapper lendRecordMapper;
 
-    @DeleteMapping("/{isbn}")
-    public Result<?> delete(@PathVariable String isbn){
-        Map<String,Object> map = new HashMap<>();
-        map.put("isbn",isbn);
-        LendRecordMapper.deleteByMap(map);
-        return Result.success();
-    }
-    //删除一条记录
-    @PostMapping("/deleteRecord")
-    public  Result<?> deleteRecord(@RequestBody LendRecord LendRecord){
-        Map<String,Object> map = new HashMap<>();
-        map.put("isbn",LendRecord.getIsbn());
-        map.put("borrow_num",LendRecord.getBorrowNum());
-        LendRecordMapper.deleteByMap(map);
-        return Result.success();
-    }
-    @PostMapping("/deleteRecords")
-    public Result<?> deleteRecords(@RequestBody List<LendRecord> LendRecords){
-        int len = LendRecords.size();
-        for(int i=0;i<len;i++) {
-            LendRecord curRecord = LendRecords.get(i);
-            Map<String,Object> map = new HashMap<>();
-            map.put("isbn",curRecord.getIsbn());
-            map.put("borrow_num",curRecord.getBorrowNum());
-            LendRecordMapper.deleteByMap(map);
-        }
-        return Result.success();
-    }
+    //新增借阅历史记录
     @PostMapping
-    public Result<?> save(@RequestBody LendRecord LendRecord){
-        LendRecordMapper.insert(LendRecord);
+    public Result<?> save(@RequestBody LendRecord lendRecord){
+        lendRecordMapper.insert(lendRecord);
         return Result.success();
     }
+
+    //分页查询借阅历史记录（多表关联查询）
     @GetMapping
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNum,
                               @RequestParam(defaultValue = "10") Integer pageSize,
-                              @RequestParam(defaultValue = "") String search1,
-                              @RequestParam(defaultValue = "") String search2,
-                              @RequestParam(defaultValue = "") String search3){
-        LambdaQueryWrapper<LendRecord> wrappers = Wrappers.<LendRecord>lambdaQuery();
-        if(StringUtils.isNotBlank(search1)){
-            wrappers.like(LendRecord::getIsbn,search1);
-        }
-        if(StringUtils.isNotBlank(search2)){
-            wrappers.like(LendRecord::getBookname,search2);
-        }
-        if(StringUtils.isNotBlank(search3)){
-            wrappers.like(LendRecord::getReaderId,search3);
-        }
-        Page<LendRecord> LendRecordPage =LendRecordMapper.selectPage(new Page<>(pageNum,pageSize), wrappers);
-        return Result.success(LendRecordPage);
+                              @RequestParam(defaultValue = "") String bookId,
+                              @RequestParam(defaultValue = "") String bookName,
+                              @RequestParam(defaultValue = "") String readerId){
+        Page<LendRecordDTO> lendRecordPage = lendRecordMapper.findPageWithDetails(
+                new Page<>(pageNum, pageSize), bookId, bookName, readerId);
+        return Result.success(lendRecordPage);
     }
 
-    @PutMapping("/{isbn}")
-    public  Result<?> update(@PathVariable String isbn,@RequestBody LendRecord lendRecord){
+    //归还图书（更新归还时间）
+    @PutMapping("/return")
+    public Result<?> returnBook(@RequestBody LendRecord lendRecord){
         UpdateWrapper<LendRecord> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("isbn",isbn);
-        LendRecord lendrecord = new LendRecord();
-        lendrecord.setLendTime(lendRecord.getLendTime());
-        lendrecord.setReturnTime(lendRecord.getReturnTime());
-        lendrecord.setStatus(lendRecord.getStatus());
-        LendRecordMapper.update(lendrecord, updateWrapper);
-        return Result.success();
-    }
-    @PutMapping("/{lendTime}")
-    public  Result<?> update2(@PathVariable Date lendTime, @RequestBody LendRecord lendRecord){
-        UpdateWrapper<LendRecord> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("lendTime",lendTime);
-        LendRecord lendrecord = new LendRecord();
-        lendrecord.setReturnTime(lendRecord.getReturnTime());
-        lendrecord.setStatus(lendRecord.getStatus());
-        LendRecordMapper.update(lendrecord, updateWrapper);
+        // 使用复合主键更新：reader_id, book_id, lend_time
+        updateWrapper.eq("reader_id", lendRecord.getReaderId())
+                    .eq("book_id", lendRecord.getBookId())
+                    .eq("lend_time", lendRecord.getLendTime());
+
+        LendRecord updateRecord = new LendRecord();
+        updateRecord.setReturnTime(new Date()); // 设置归还时间为当前时间
+
+        lendRecordMapper.update(updateRecord, updateWrapper);
         return Result.success();
     }
 
+    //删除借阅历史记录（根据复合主键）
+    @DeleteMapping
+    public Result<?> delete(@RequestParam Long readerId,
+                           @RequestParam Long bookId,
+                           @RequestParam String lendTime){
+        UpdateWrapper<LendRecord> deleteWrapper = new UpdateWrapper<>();
+        deleteWrapper.eq("reader_id", readerId)
+                    .eq("book_id", bookId)
+                    .eq("lend_time", lendTime);
+
+        lendRecordMapper.delete(deleteWrapper);
+        return Result.success();
+    }
 }

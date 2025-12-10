@@ -42,7 +42,7 @@ npm run build
 
 ### Database Setup
 - Database: MySQL (database name: `test1`)
-- Schema file: `sql/springboot-vue.sql`
+- Schema file: `sql/library_old.sql`
 - Default connection: `localhost:3306` with user `root` and password `123456`
 
 ## Architecture
@@ -120,7 +120,7 @@ Development proxy configured in `vue.config.js` to handle CORS between frontend 
 ## Development Notes
 
 ### Running the Full Application
-1. Set up MySQL database and import `sql/springboot-vue.sql`
+1. Set up MySQL database and import `sql/library_old.sql`
 2. Update database credentials in `SpringBoot/src/main/resources/application.properties` if needed
 3. Start backend: `cd SpringBoot && mvn spring-boot:run`
 4. Start frontend: `cd vue && npm install && npm run serve`
@@ -180,7 +180,7 @@ npm run build
 
 ### 数据库设置
 - 数据库：MySQL（数据库名：`test1`）
-- 架构文件：`sql/springboot-vue.sql`
+- 架构文件：`sql/library_old.sql`
 - 默认连接：`localhost:3306`，用户名 `root`，密码 `123456`
 
 ## 架构
@@ -258,7 +258,7 @@ Vue-Springboot-Library-main/
 ## 开发说明
 
 ### 运行完整应用程序
-1. 设置 MySQL 数据库并导入 `sql/springboot-vue.sql`
+1. 设置 MySQL 数据库并导入 `sql/library_old.sql`
 2. 如需要，更新 `SpringBoot/src/main/resources/application.properties` 中的数据库凭据
 3. 启动后端：`cd SpringBoot && mvn spring-boot:run`
 4. 启动前端：`cd vue && npm install && npm run serve`
