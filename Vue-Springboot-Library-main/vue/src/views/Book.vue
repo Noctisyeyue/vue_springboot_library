@@ -476,14 +476,15 @@ export default {
       // 先准备借阅记录数据
       let startDate = moment(new Date()).format("yyyy-MM-DD HH:mm:ss");
       let form3 = {};
+      form3.bookId = row.id;  // 添加图书ID
       form3.isbn = row.isbn;
       form3.bookName = row.name;
       form3.nickName = this.user.username;
       form3.readerId = this.user.id;
-      form3.lendTime = startDate;  
+      form3.lendTime = startDate;
       let nowDate = new Date(startDate);
       nowDate.setDate(nowDate.getDate()+30);
-      form3.deadTime = moment(nowDate).format("yyyy-MM-DD HH:mm:ss"); 
+      form3.deadTime = moment(nowDate).format("yyyy-MM-DD HH:mm:ss");
       form3.prolong  = 1;
       
       // 先检查是否已借阅该书
@@ -507,10 +508,11 @@ export default {
             
             // 添加到历史借阅记录
             this.form2.status = "0"
+            this.form2.bookId = row.id  // 添加图书ID - 这是必需的字段
             this.form2.isbn = row.isbn
             this.form2.bookname = row.name
             this.form2.readerId = this.user.id
-            this.form2.borrowNum = (row.borrowNum || 0) + 1 
+            this.form2.borrowNum = (row.borrowNum || 0) + 1
             this.form2.lendTime = startDate
             
             request.post("/LendRecord", this.form2).then(() =>{

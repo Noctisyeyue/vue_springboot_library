@@ -22,10 +22,18 @@ public class BookWithUserController {
     BookWithUserMapper bookWithUserMapper;
 
     /**
-     * 新增借阅记录 - 带重复检查
+     * 新增借阅记录 - 带重复检查和参数验证
      */
     @PostMapping("/insertNew")
     public Result<?> insertNew(@RequestBody BookWithUser bookWithUser){
+        // 参数验证：确保必填字段不为空
+        if (bookWithUser.getReaderId() == null) {
+            return Result.error("读者ID不能为空");
+        }
+        if (bookWithUser.getBookId() == null) {
+            return Result.error("图书ID不能为空");
+        }
+
         // 检查该用户是否已经借阅了相同的书 - 查询"某个用户"借阅了"某本特定书"的记录
         LambdaQueryWrapper<BookWithUser> queryWrapper = Wrappers.<BookWithUser>lambdaQuery()
                 .eq(BookWithUser::getReaderId, bookWithUser.getReaderId())
