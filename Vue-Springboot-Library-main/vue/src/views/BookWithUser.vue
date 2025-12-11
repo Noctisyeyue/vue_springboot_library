@@ -43,8 +43,9 @@
       </el-table-column>
       <el-table-column prop="isbn" label="图书编号" sortable />
       <el-table-column prop="bookName" label="图书名称" />
+      <el-table-column prop="readerId" label="读者编号" />
       <el-table-column prop="nickName" label="借阅者" />
-      <el-table-column prop="lendTime" label="借阅时间" /> 
+      <el-table-column prop="lendTime" label="借阅时间" />
       <el-table-column prop="deadTime" label="最迟归还日期" />  
       <el-table-column prop="prolong" label="可续借次数" />
       <el-table-column fixed="right" label="操作" >
