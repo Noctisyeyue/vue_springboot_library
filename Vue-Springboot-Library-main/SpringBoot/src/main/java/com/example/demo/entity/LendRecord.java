@@ -19,4 +19,8 @@ public class LendRecord {
     private Date returnTime;   // 归还时间
     private String status;     // 借阅状态：0-未归还，1-已归还
 
+    // 非数据库字段，用于前端传输数据
+    @TableField(exist = false)
+    private String isbn;       // 图书编号（用于归还时查询bookId）
+
 }

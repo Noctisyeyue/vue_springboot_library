@@ -19,7 +19,7 @@ import java.util.Date;
 public class Book {
 
     @TableId (type = IdType.AUTO)
-    private Integer id;
+    private Long id;
     private String isbn;
     private String name;
     private BigDecimal price;

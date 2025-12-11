@@ -443,13 +443,9 @@ export default {
         request.put("/LendRecord1/",this.form3).then(res =>{
           console.log(res)
           let form3 ={};
-          form3.isbn = row.isbn;
-          form3.bookName = row.name;
-          form3.nickName = this.user.username;
+          // 修复：发送bookId而不是isbn，因为后端删除需要bookId
+          form3.bookId = row.id;  // 使用图书ID
           form3.readerId = this.user.id;
-          form3.lendTime = endDate;  
-          form3.deadTime = endDate;  
-          form3.prolong  = 1;
           request.post("/bookwithuser/deleteRecord",form3).then(res =>{
             console.log(res)
             this.load()
