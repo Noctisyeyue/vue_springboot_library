@@ -551,7 +551,7 @@ export default {
           this.dialogVisible2 = false
         })
       }
-      else {
+      else { 
         // 新增图书时初始化字段
         this.form.borrowNum = 0 
         this.form.borrowedQuantity = 0

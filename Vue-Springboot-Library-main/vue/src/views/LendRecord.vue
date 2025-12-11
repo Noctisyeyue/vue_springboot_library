@@ -44,7 +44,7 @@
                        width="55">
       </el-table-column>
       <el-table-column prop="isbn" label="图书编号" sortable />
-      <el-table-column prop="bookname" label="图书名称" />
+      <el-table-column prop="bookName" label="图书名称" />
       <el-table-column prop="readerId" label="读者编号" sortable/>
       <el-table-column prop="lendTime" label="借阅时间" sortable/>
       <el-table-column prop="returnTime" label="归还时间" sortable/>

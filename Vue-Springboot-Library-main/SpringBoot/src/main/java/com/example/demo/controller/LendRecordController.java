@@ -29,11 +29,12 @@ public class LendRecordController {
     @GetMapping
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNum,
                               @RequestParam(defaultValue = "10") Integer pageSize,
-                              @RequestParam(defaultValue = "") String bookId,
-                              @RequestParam(defaultValue = "") String bookName,
-                              @RequestParam(defaultValue = "") String readerId){
+                              @RequestParam(defaultValue = "") String search1,
+                              @RequestParam(defaultValue = "") String search2,
+                              @RequestParam(defaultValue = "") String search3){
+        // 修复参数映射：前端发送search1,search2,search3，需要对应转换为bookId,bookName,readerId
         Page<LendRecordDTO> lendRecordPage = lendRecordMapper.findPageWithDetails(
-                new Page<>(pageNum, pageSize), bookId, bookName, readerId);
+                new Page<>(pageNum, pageSize), search1, search2, search3);
         return Result.success(lendRecordPage);
     }
 
