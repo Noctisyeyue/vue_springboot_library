@@ -101,8 +101,7 @@ public class UserController {
                               @RequestParam(defaultValue = "10") Integer pageSize,
                               @RequestParam(defaultValue = "") String search1,
                                @RequestParam(defaultValue = "") String search2,
-                               @RequestParam(defaultValue = "") String search3,
-                               @RequestParam(defaultValue = "") String search4){
+                               @RequestParam(defaultValue = "") String search3){
         LambdaQueryWrapper<User> wrappers = Wrappers.<User>lambdaQuery();
         if(StringUtils.isNotBlank(search1)){
             wrappers.like(User::getId,search1);
@@ -112,9 +111,6 @@ public class UserController {
         }
         if(StringUtils.isNotBlank(search3)){
             wrappers.like(User::getPhone,search3);
-        }
-        if(StringUtils.isNotBlank(search4)){
-            wrappers.like(User::getAddress,search4);
         }
         wrappers.like(User::getRole,2);
         Page<User> userPage =userMapper.selectPage(new Page<>(pageNum,pageSize), wrappers);

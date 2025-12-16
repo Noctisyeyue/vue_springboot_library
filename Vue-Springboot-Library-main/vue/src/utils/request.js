@@ -12,9 +12,15 @@ const request = axios.create({
 request.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/json;charset=utf-8';//统一设置请求头告诉后端"我发的是 JSON 数据"
 
-    // config.headers['token'] = user.token;  // 设置请求头
-    //取出sessionStorage里面缓存的用户信息
-    let userJson = sessionStorage.getItem("user")  //检查浏览器里是否有登录用户信息
+    // 取出sessionStorage里面缓存的用户信息并附带token
+    const userJson = sessionStorage.getItem("user")  //检查浏览器里是否有登录用户信息
+    if (userJson) {
+        const user = JSON.parse(userJson)
+        // 避免可选链导致旧版构建报错
+        if (user && user.token) {
+            config.headers['token'] = user.token;  // 设置请求头
+        }
+    }
     if(!userJson)                           //如果没登录 → 强制跳到登录页
     {
         router.push("/login")

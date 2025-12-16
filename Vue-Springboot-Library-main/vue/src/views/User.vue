@@ -19,11 +19,6 @@
             <template #prefix><el-icon class="el-input__icon"><search /></el-icon></template>
           </el-input>
         </el-form-item >
-        <el-form-item label="地址" >
-          <el-input v-model="search4" placeholder="请输入地址"  clearable>
-            <template #prefix><el-icon class="el-input__icon"><search /></el-icon></template>
-          </el-input>
-        </el-form-item >
         <el-form-item>
       <el-button type="primary" style="margin-left: 1%" @click="load" size="mini">查询</el-button>
         </el-form-item>
@@ -41,7 +36,8 @@
       </el-popconfirm>
     </div>
 <!-- 数据字段-->
-    <el-table :data="tableData" stripe border="true"  @selection-change="handleSelectionChange" >
+    <div style="width: 1000px; overflow-x: auto; overflow-y: auto; height: calc(100vh - 230px); margin-left: 20px; margin-right: 20px;">
+    <el-table :data="tableData" stripe border="true"  @selection-change="handleSelectionChange" style="width: 1000px;">
       <el-table-column v-if="user.role ==1 "
                        type="selection"
                        width="55">
@@ -52,7 +48,7 @@
       <el-table-column prop="phone" label="电话号码" />
       <el-table-column prop="sex" label="性别" />
       <el-table-column prop="address" label="地址" />
-      <el-table-column fixed="right" label="操作" >
+      <el-table-column fixed="right" label="操作" width="180">
         <template v-slot="scope">
           <el-button  size="mini" @click ="handleEdit(scope.row)">编辑</el-button>
           <el-popconfirm title="确认删除?" @confirm="handleDelete(scope.row.id)">
@@ -63,6 +59,7 @@
         </template>
       </el-table-column>
     </el-table>
+    </div>
 <!--    分页-->
     <div style="margin: 10px 0">
       <el-pagination
@@ -148,7 +145,6 @@ export default {
           search1: this.search1,
           search2: this.search2,
           search3: this.search3,
-          search4: this.search4,
         }
       }).then(res =>{
         console.log(res)
@@ -235,7 +231,6 @@ export default {
       search1:'',
       search2:'',
       search3:'',
-      search4:'',
       total:10,
       currentPage:1,
       pageSize: 10,

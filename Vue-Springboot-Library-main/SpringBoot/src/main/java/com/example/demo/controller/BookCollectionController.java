@@ -84,10 +84,11 @@ public class BookCollectionController {
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNum,
                               @RequestParam(defaultValue = "10") Integer pageSize,
                               @RequestParam Long readerId,
-                              @RequestParam(defaultValue = "") String search){
+                              @RequestParam(defaultValue = "") String search1,
+                              @RequestParam(defaultValue = "") String search2){
 
         Page<BookCollectionDTO> collectionPage = bookCollectionMapper.findPageWithBookDetails(
-                new Page<>(pageNum, pageSize), readerId, search);
+                new Page<>(pageNum, pageSize), readerId, search1, search2);
         return Result.success(collectionPage);
     }
 

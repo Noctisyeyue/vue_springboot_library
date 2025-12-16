@@ -21,10 +21,9 @@ public class LendRecordController1 {
 
     /**
      * 更新借阅历史记录（归还图书）
-     * 修复：根据readerId和bookId查找未归还记录，不依赖lendTime
      */
     @PutMapping
-    public Result<?> updateReturn(@RequestBody LendRecord lendRecord){
+    public Result<?> updateReturn(@RequestBody LendRecord lendRecord) {
         // 根据ISBN查询图书ID
         QueryWrapper<Book> bookQuery = new QueryWrapper<>();
         bookQuery.eq("isbn", lendRecord.getIsbn());
@@ -36,12 +35,13 @@ public class LendRecordController1 {
 
         // 使用UpdateWrapper直接更新未归还的记录
         com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper<LendRecord> updateWrapper =
-            new com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper<>();
+                new com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper<>();
         updateWrapper.eq("reader_id", lendRecord.getReaderId())
-                    .eq("book_id", book.getId())
-                    .eq("status", "0") // 只更新未归还的记录
-                    .set("return_time", new Date())
-                    .set("status", "1");
+                .eq("book_id", book.getId())
+                .eq("lend_time", lendRecord.getLendTime()) // 添加lendTime条件
+                .eq("status", "0") // 只更新未归还的记录
+                .set("return_time", new Date())
+                .set("status", "1");
 
         int result = lendRecordMapper.update(null, updateWrapper);
 

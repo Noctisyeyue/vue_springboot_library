@@ -1,23 +1,24 @@
 <template>
   <div class="collection" style="padding: 10px">
-    <h2 style="margin-bottom: 20px">📚 我的收藏</h2>
-
-    <!-- 搜索栏 -->
+    <!-- 搜索-->
     <div style="margin: 10px 0;">
       <el-form inline="true" size="small">
-        <el-form-item label="搜索">
-          <el-input 
-            v-model="search" 
-            placeholder="请输入图书名称或作者" 
-            clearable
-            style="width: 300px">
-            <template #prefix>
-              <el-icon class="el-input__icon"><search /></el-icon>
-            </template>
+        <el-form-item label="图书名称">
+          <el-input v-model="search1" placeholder="请输入图书名称" clearable>
+            <template #prefix><el-icon class="el-input__icon">
+                <search />
+              </el-icon></template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="作者">
+          <el-input v-model="search2" placeholder="请输入作者" clearable>
+            <template #prefix><el-icon class="el-input__icon">
+                <search />
+              </el-icon></template>
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="load" size="mini">查询</el-button>
+          <el-button type="primary" style="margin-left: 1%" @click="load" size="mini">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button size="mini" type="danger" @click="clear">重置</el-button>
@@ -35,55 +36,43 @@
     </div>
 
     <!-- 收藏列表 -->
-    <el-table 
-      :data="tableData" 
-      stripe 
-      border 
-      @selection-change="handleSelectionChange"
-      style="width: 100%">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="isbn" label="图书编号" width="150"></el-table-column>
-      <el-table-column prop="bookName" label="图书名称" min-width="200">
-        <template v-slot="scope">
-          <el-button 
-            type="text" 
-            @click="showDetail(scope.row)" 
-            style="color: #409EFF; font-weight: 500;">
-            {{ scope.row.bookName }}
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="author" label="作者" width="150"></el-table-column>
-      <el-table-column prop="collectionTime" label="收藏时间" width="180">
-        <template v-slot="scope">
-          {{ formatDate(scope.row.collectionTime) }}
-        </template>
-      </el-table-column>
-      <el-table-column fixed="right" label="操作" width="180">
-        <template v-slot="scope">
-          <el-button size="mini" type="primary" @click="goToBorrow(scope.row)">
-            去借阅
-          </el-button>
-          <el-popconfirm 
-            title="确认取消收藏?" 
-            @confirm="cancelCollection(scope.row.id)">
-            <template #reference>
-              <el-button type="danger" size="mini">取消收藏</el-button>
-            </template>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div
+      style="width: 1000px; overflow-x: auto; overflow-y: auto; height: calc(100vh - 230px); margin-left: 20px; margin-right: 20px;">
+      <el-table :data="tableData" stripe border @selection-change="handleSelectionChange" style="width: 1000px;">
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="isbn" label="图书编号" width="150"></el-table-column>
+        <el-table-column prop="bookName" label="图书名称" min-width="200">
+          <template v-slot="scope">
+            <el-button type="text" @click="showDetail(scope.row)" style="color: #409EFF; font-weight: 500;">
+              {{ scope.row.bookName }}
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop="author" label="作者" width="150"></el-table-column>
+        <el-table-column prop="collectionTime" label="收藏时间" width="180">
+          <template v-slot="scope">
+            {{ formatDate(scope.row.collectionTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="200">
+          <template v-slot="scope">
+            <el-button size="mini" type="primary" @click="goToBorrow(scope.row)">
+              去借阅
+            </el-button>
+            <el-popconfirm title="确认取消收藏?" @confirm="cancelCollection(scope.row.id)">
+              <template #reference>
+                <el-button type="danger" size="mini">取消收藏</el-button>
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <!-- 分页 -->
     <div style="margin: 10px 0">
-      <el-pagination
-        v-model:currentPage="currentPage"
-        :page-sizes="[5, 10, 20]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
+      <el-pagination v-model:currentPage="currentPage" :page-sizes="[5, 10, 20]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange">
       </el-pagination>
     </div>
@@ -131,7 +120,8 @@ export default {
   data() {
     return {
       user: {},
-      search: '',
+      search1: '',
+      search2: '',
       currentPage: 1,
       pageSize: 10,
       total: 0,
@@ -148,7 +138,8 @@ export default {
           pageNum: this.currentPage,
           pageSize: this.pageSize,
           readerId: this.user.id,
-          search: this.search
+          search1: this.search1,
+          search2: this.search2
         }
       }).then(res => {
         if (res.code == '0' || res.code == 0) {
@@ -159,7 +150,8 @@ export default {
     },
 
     clear() {
-      this.search = '';
+      this.search1 = '';
+      this.search2 = '';
       this.load();
     },
 

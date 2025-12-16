@@ -69,7 +69,7 @@
     </el-menu-item>
     <el-menu-item index="/bookwithuser" v-if="user.role == 2">
       <el-icon><grid /></el-icon>
-      <span>我的书籍</span>
+      <span>我的借阅</span>
     </el-menu-item>
     <el-menu-item index="/bookwithuser" v-if="user.role == 1">
       <el-icon><grid /></el-icon>
