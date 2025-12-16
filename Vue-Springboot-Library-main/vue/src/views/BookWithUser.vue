@@ -42,9 +42,7 @@
       </el-popconfirm>
     </div>
     <!-- 数据字段-->
-    <div
-      style="width: 1000px; overflow-x: auto; overflow-y: auto; height: calc(100vh - 230px); margin-left: 20px; margin-right: 20px;">
-      <el-table :data="tableData" stripe border="true" @selection-change="handleSelectionChange" style="width: 1000px;">
+    <el-table :data="tableData" stripe border="true" @selection-change="handleSelectionChange" style="width: 100%;">
         <el-table-column v-if="user.role == 1" type="selection" width="55">
         </el-table-column>
         <el-table-column prop="isbn" label="图书编号" sortable />
@@ -76,7 +74,6 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
     <!--    分页-->
     <div style="margin: 10px 0">
       <el-pagination v-model:currentPage="currentPage" :page-sizes="[5, 10, 20]" :page-size="pageSize"
