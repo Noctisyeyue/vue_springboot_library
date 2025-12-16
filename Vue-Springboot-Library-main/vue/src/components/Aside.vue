@@ -1,9 +1,8 @@
 <template>
-<div>
-
+<div style="position: fixed; top: 50px; left: 0; bottom: 0; z-index: 999;">
 
   <el-menu
-      style="width: 200px; min-height: calc(100vh - 50px);"
+      style="width: 200px; height: 100%;"
       :default-active="path"
       class="el-menu-vertical-demo"
       @open="handleOpen"
