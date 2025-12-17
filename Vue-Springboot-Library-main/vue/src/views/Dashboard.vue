@@ -13,7 +13,8 @@
         </el-card>
       </el-col>
     </el-row>
-    <div id="myTimer" style="margin-left: 15px;font-weight: 550;"></div>
+    <!-- 使用Vue的ref属性来引用DOM元素，避免直接使用id进行DOM操作 -->
+    <div ref="myTimer" style="margin-left: 15px;font-weight: 550;"></div>
     <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
     <div id="main" style="margin-left: 5px"></div>
   </div>
@@ -127,9 +128,17 @@ export default {
       }, 1000)
     },
     getTimer() {
+      //创建新的Date对象获取当前时间
       var d = new Date()
+      //将时间转换为本地时间字符串格式
       var t = d.toLocaleString()
-      document.getElementById('myTimer').innerHTML = t
+
+      //添加空值检查，防止DOM元素未渲染完成时访问导致的错误
+      if (this.$refs.myTimer) {
+        //设置元素的innerHTML来显示时间
+        this.$refs.myTimer.innerHTML = t
+      }
+      // 如果元素不存在（比如组件还未完全挂载），则跳过更新，避免报错
     }
   }
 }
