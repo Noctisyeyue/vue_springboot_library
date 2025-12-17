@@ -67,8 +67,9 @@ export default {
     }
   },
   methods: {
+     // 接收验证码组件生成的验证码
     createValidCode(data){
-      this.validCode = data //正确验证码值传回父组件
+      this.validCode = data // 存储正确的验证码
     },
     login(){
       this.$refs['form'].validate((valid) => {//获取页面上一个被标记为 ref="form" 的表单组件  .validate() 是 Element Plus 表单组件提供的一个方法，用于触发所有预设的校验规则

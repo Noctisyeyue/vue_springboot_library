@@ -1,12 +1,12 @@
 import { createStore } from 'vuex'
 
 export default createStore({
-  state: {
+  state: {  // 数据
   },
-  mutations: {
+  mutations: {  // 修改数据的方法
   },
-  actions: {
+  actions: { // 异步操作
   },
-  modules: {
+  modules: {  // 模块化
   }
 })

@@ -5,13 +5,13 @@ const routes = [
   {
     path: '/',           // 根路径
     name: 'Layout',      // 路由名称
-    redirect:"user",     // 重定向：访问 / 自动跳转到 /user
+    redirect:"dashboard",     // 重定向：访问 / 自动跳转到 /dashboard
     component: Layout,   // 使用 Layout 布局组件
     children:[            // 子路由（嵌套在 Layout 内显示） 都会被渲染到 Layout 组件内部的 <router-view></router-view> 标签所在的位置
       {
         path:'user',
         name:'user',
-        component:() => import("@/views/User")  //路由懒加载  
+        component:() => import("@/views/User")  //路由懒加载  按需加载
       },
       {
         path: 'book',
