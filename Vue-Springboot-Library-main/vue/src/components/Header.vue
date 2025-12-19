@@ -3,9 +3,9 @@
    <div style="width: 200px; padding-left:30px; font-weight: bold; color:dodgerblue">
      <img :src="imgUrl" class="icon" >
      图书馆管理系统</div>
-   <div style="flex: 1"></div>
+   <div style="flex: 1"></div><!--把用户名推到最右边-->
    <div style="width: 100px">
-     <el-dropdown>
+     <el-dropdown><!--下拉菜单-->
       <span class="el-dropdown-link">
         {{user.nickName}} <el-icon class="el-icon--right">
           <arrow-down />
