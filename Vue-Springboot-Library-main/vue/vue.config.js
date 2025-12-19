@@ -7,7 +7,7 @@ module.exports = {
                 target: 'http://localhost:9090',     //代理的目标地址
                 changeOrigin: true,              //是否设置同源，输入是的.改变请求头的 origin.伪装成是 9090 端口自己发的请求
                 pathRewrite: {                   //路径重写
-                    '^/api': ''                     // 去掉 /api 前缀
+                    '^/api': ''                  // 去掉 /api 前缀
                 }
             }
         }

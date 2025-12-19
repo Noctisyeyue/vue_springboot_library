@@ -6,7 +6,7 @@ const request = axios.create({
     timeout: 5000
 })
 
-// request 拦截器
+// request 请求拦截器
 // 可以自请求发送前对请求做一些处理
 // 统一加token，对请求参数统一加密
 request.interceptors.request.use(config => {
@@ -15,8 +15,7 @@ request.interceptors.request.use(config => {
     // 取出sessionStorage里面缓存的用户信息并附带token
     const userJson = sessionStorage.getItem("user")  //检查浏览器里是否有登录用户信息
     if (userJson) {
-        const user = JSON.parse(userJson)
-        // 避免可选链导致旧版构建报错
+        const user = JSON.parse(userJson)//将JSON格式的字符串转换为JavaScript对象 可以被使用user.token
         if (user && user.token) {
             config.headers['token'] = user.token;  // 设置请求头
         }
@@ -30,18 +29,18 @@ request.interceptors.request.use(config => {
     return Promise.reject(error)
 });
 
-// response 拦截器
+// response 响应拦截器
 // 可以在接口响应后统一处理结果
 request.interceptors.response.use(
     response => {                   //axios 把服务器返回的完整信息包装在了一个 response 对象里
-        let res = response.data;   //axios 把真正的数据放在 response.data 里
+        let res = response.data;   //axios 把真正的数据放在response.data里
         // 如果是返回的文件
         if (response.config.responseType === 'blob') {
             return res    //直接返回
         }
         // 兼容服务端返回的字符串数据
         if (typeof res === 'string') {
-            res = res ? JSON.parse(res) : res  //转换成真正的 JavaScript 对象
+            res = res ? JSON.parse(res) : res  //将JSON字符串转换为JavaScript对象
         }
         return res;
     },
