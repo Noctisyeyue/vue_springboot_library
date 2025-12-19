@@ -59,40 +59,37 @@ export default {
       }
 
 
-      // 基于准备好的dom，初始化echarts实例
-      var myChart = echarts.init(document.getElementById('main'))
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'))
     console.log(this.cards[0].data)
       // 绘制图表
       myChart.setOption({
         title: {
           text: '统计'
         },
-        tooltip: {
-          trigger: 'axis'
-          // axisPointer: {
-          //   type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          // }
+        tooltip: {                // 鼠标悬停提示
+          trigger: 'axis'         //鼠标碰到了柱子所在的这一竖条区域 显示详细数据
         },
-        grid: {
+        grid: {                 // 图表边距设置
           left: '3%',
           right: '4%',
           bottom: '3%',
           containLabel: true
         },
-        xAxis: {
+        xAxis: {               // X轴（分类轴）
           type: 'category',
           data: this.cards.map(item => item.title),
           axisTick: {
-            alignWithLabel: true
+            alignWithLabel: true      //让刻度线与标签对齐
           }
         },
-        yAxis: {
+        yAxis: {               // Y轴（数值轴）
           type: 'value'
         },
         series: [
           {
-            type: 'bar',
-            label: { show: true },
+            type: 'bar',        //bar 代表柱状图
+            label: { show: true },      //柱子顶上要不要显示数字true=显示
             barWidth: '25%',
             data: [
               {
@@ -115,6 +112,7 @@ export default {
           }
         ]
       })
+      //自动调整图表尺寸
       window.addEventListener('resize', () => {
         myChart.resize()
       })
