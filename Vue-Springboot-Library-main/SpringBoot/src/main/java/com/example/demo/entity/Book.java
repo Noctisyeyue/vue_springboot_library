@@ -31,6 +31,7 @@ public class Book {
     private String status;
     private Integer  totalQuantity;//图书总数量
     private Integer  borrowedQuantity;//已借阅数量
+    private String bookPicture;//图书图片路径
 
     // 计算可借阅数量的方法（非数据库字段）
     public Integer getAvailableQuantity() {

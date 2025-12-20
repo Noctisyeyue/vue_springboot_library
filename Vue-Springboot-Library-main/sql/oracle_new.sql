@@ -30,7 +30,7 @@ CREATE TABLE book (
                       author VARCHAR2(255),
                       publisher VARCHAR2(255),
                       create_time DATE,
-                      book_picture VARCHAR2(200),
+                      book_picture VARCHAR2(500),
                       status VARCHAR2(1) DEFAULT '1' NOT NULL,
                       borrow_num NUMBER(10) DEFAULT 0 NOT NULL,
                       total_quantity NUMBER(10) DEFAULT 1 NOT NULL,
