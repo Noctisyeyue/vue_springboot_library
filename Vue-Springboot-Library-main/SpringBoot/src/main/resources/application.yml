@@ -1,0 +1,24 @@
+# 服务器配置
+server:
+  port: 9090
+
+# 数据源配置
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@//localhost:1521/orclpdb
+    username: library
+    password: 123456
+
+# MyBatis-Plus配置
+mybatis-plus:
+  configuration:
+    # 开启驼峰命名转换
+    map-underscore-to-camel-case: true
+    # 指定NULL值的处理方式
+    jdbc-type-for-null: NULL
+  # 全局数据库配置
+  global-config:
+    db-config:
+      # 明确指定Oracle数据库类型
+      db-type: oracle
