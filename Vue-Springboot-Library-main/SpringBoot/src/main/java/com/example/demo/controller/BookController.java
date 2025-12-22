@@ -146,4 +146,16 @@ public class BookController {
         }
         return Result.success(book);
     }
+
+    // 获取借阅量最高的前N本书（用于首页推荐）
+    @GetMapping("/top")
+    public Result<?> getTopBooks(@RequestParam(defaultValue = "4") Integer limit){
+        // 使用分页查询来实现TOP N，
+        Page<Book> page = new Page<>(1, limit);
+        LambdaQueryWrapper<Book> wrapper = Wrappers.<Book>lambdaQuery();
+        wrapper.orderByDesc(Book::getBorrowNum); // 按借阅次数降序排列
+
+        Page<Book> bookPage = bookMapper.selectPage(page, wrapper);
+        return Result.success(bookPage.getRecords());
+    }
 }

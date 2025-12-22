@@ -12,12 +12,19 @@
   router  启用路由模式   
   :default-active="path"  高亮显示
   -->
-    <!-- 仪表板菜单项：系统首页，所有用户都可以访问 -->
-    <el-menu-item index="/dashboard">
+    <!-- 仪表板菜单项：展示板，管理员可访问 -->
+    <el-menu-item index="/dashboard" v-if="user.role == 1">
       <svg class="icon" aria-hidden="true">
         <use xlink:href="#icondashboard" />    <!-- 仪表盘图标 -->
       </svg>
       <span>展示板</span>
+    </el-menu-item>
+    <!-- 仪表板菜单项：系统首页，用户可访问 -->
+    <el-menu-item index="/home" v-if="user.role == 2">
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icondashboard" />    <!-- 仪表盘图标 -->
+      </svg>
+      <span>首页</span>
     </el-menu-item>
     <!-- 个人信息子菜单：包含个人信息修改和密码修改功能 -->
     <el-sub-menu index="2" text-color="#fff">

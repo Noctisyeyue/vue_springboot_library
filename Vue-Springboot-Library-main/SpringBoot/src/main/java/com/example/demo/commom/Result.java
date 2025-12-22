@@ -56,7 +56,7 @@ public class Result<T> {
         result.setMsg(msg);
         return result;
     }
-    // 新增：默认错误码为 "-1" 的便捷方法
+    // 默认错误码为 "-1" 的便捷方法
     public static Result error(String msg) {
         Result result = new Result();
         result.setCode("-1");

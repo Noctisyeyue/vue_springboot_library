@@ -117,8 +117,15 @@ export default {
               // 将用户信息存储到 sessionStorage，实现持久化登录状态
               sessionStorage.setItem("user", JSON.stringify(res.data))
 
-              // 跳转到系统主页
-              this.$router.push("/dashboard")
+              // 根据用户角色跳转到对应页面
+              const userRole = res.data.role
+              if (userRole == 1) {
+                // 管理员跳转到展示板
+                this.$router.push("/dashboard")
+              } else {
+                // 普通用户跳转到首页
+                this.$router.push("/home")
+              }
             } else {  // 登录失败
               ElMessage.error(res.msg)  // 显示后端返回的错误信息
             }

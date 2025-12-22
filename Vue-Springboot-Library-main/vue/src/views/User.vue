@@ -296,7 +296,7 @@ export default {
      */
     handleEdit(row) {
       // 深拷贝避免直接修改原数据
-      this.form = JSON.parse(JSON.stringify(row))
+      this.form = JSON.parse(JSON.stringify(row))//先转成 JSON 字符串，再把这个字符串解析回一个新对象
       this.dialogVisible = true  // 显示对话框
     },
 

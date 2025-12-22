@@ -7,20 +7,15 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- *  mybatis-plus 分页插件
- */
+
 @Configuration
 @MapperScan("com.example.demo.mapper")
 @MapperScan("com.example.demo.service")
 public class MybatisPlusConfig {
 
-    /**
-     * 分页插件
-     */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        // 1. 创建一个 Mybatis-Plus 的总拦截器
+        //创建一个 Mybatis-Plus 的总拦截器
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.ORACLE));
         return interceptor;

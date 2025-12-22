@@ -7,22 +7,22 @@
         <el-form-item label="图书编号">
           <el-input v-model="search1" placeholder="请输入图书编号" clearable>
             <template #prefix><el-icon class="el-input__icon">
-              <search />
-            </el-icon></template>
+                <search />
+              </el-icon></template>
           </el-input>
         </el-form-item>
         <el-form-item label="图书名称">
           <el-input v-model="search2" placeholder="请输入图书名称" clearable>
             <template #prefix><el-icon class="el-input__icon">
-              <search />
-            </el-icon></template>
+                <search />
+              </el-icon></template>
           </el-input>
         </el-form-item>
         <el-form-item label="作者">
           <el-input v-model="search3" placeholder="请输入作者" clearable>
             <template #prefix><el-icon class="el-input__icon">
-              <search />
-            </el-icon></template>
+                <search />
+              </el-icon></template>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -35,7 +35,7 @@
         </el-form-item>
         <el-form-item style="float: right" v-if="numOfOutDataBook != 0">
           <el-popconfirm confirm-button-text="查看" cancel-button-text="取消" :icon="InfoFilled" icon-color="red"
-                         title="您有图书已逾期，请尽快归还" @confirm="toLook">
+            title="您有图书已逾期，请尽快归还" @confirm="toLook">
             <template #reference>
               <el-button type="warning">逾期通知</el-button>
             </template>
@@ -54,74 +54,74 @@
     </div>
     <!-- 数据字段-->
     <el-table :data="tableData" stripe border="true" @selection-change="handleSelectionChange" style="width: 100%;">
-      <el-table-column v-if="user.role == 1" type="selection" width="55">
-      </el-table-column>
-      <el-table-column label="封面" width="80">
-        <template v-slot="scope">
-          <el-image
+        <el-table-column v-if="user.role == 1" type="selection" width="55">
+        </el-table-column>
+        <el-table-column label="封面" width="80">
+          <template v-slot="scope">
+            <el-image 
               v-if="scope.row.bookPicture"
-              :src="getImageUrl(scope.row.bookPicture)"
+              :src="getImageUrl(scope.row.bookPicture)" 
               style="width: 60px; height: 80px; border-radius: 4px;"
               fit="cover"
               :preview-src-list="[getImageUrl(scope.row.bookPicture)]"
               preview-teleported>
-          </el-image>
-          <span v-else style="color: #909399; font-size: 12px;">无封面</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="isbn" label="图书编号" sortable />
-      <el-table-column prop="name" label="图书名称">
-        <template v-slot="scope">
-          <el-button type="text" @click="showDetail(scope.row)" style="color: #409EFF; font-weight: 500;">
-            {{ scope.row.name }}
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="author" label="作者" />
-      <el-table-column prop="publisher" label="出版社" />
-      <el-table-column label="出版日期" width="100">
-        <template v-slot="scope">
-          {{ getYear(scope.row.createTime) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="剩余可借" width="100">
-        <template v-slot="scope">
-          <el-tag :type="getAvailableQuantity(scope.row) > 0 ? 'success' : 'info'">
-            {{ getAvailableQuantity(scope.row) }} 本
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="status" label="状态" width="100">
-        <template v-slot="scope">
-          <el-tag v-if="getAvailableQuantity(scope.row) <= 0" type="warning">不可借阅</el-tag>
-          <el-tag v-else type="success">可借阅</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column fixed="right" label="操作" width="200">
-        <template v-slot="scope">
-          <el-button size="mini" @click="handleEdit(scope.row)" v-if="user.role == 1">修改</el-button>
-          <el-popconfirm title="确认删除?" @confirm="handleDelete(scope.row.id)" v-if="user.role == 1">
-            <template #reference>
-              <el-button type="danger" size="mini">删除</el-button>
-            </template>
-          </el-popconfirm>
-          <el-button size="mini" @click="handlelend(scope.row)" v-if="user.role == 2"
-                     :disabled="getAvailableQuantity(scope.row) <= 0">借阅</el-button>
-          <el-popconfirm title="确认还书?" @confirm="handleReturn(scope.row)" v-if="user.role == 2">
-            <template #reference>
-              <el-button type="danger" size="mini" :disabled="(this.isbnArray.indexOf(scope.row.isbn)) == -1">还书</el-button>
-            </template>
-          </el-popconfirm>
-          <!-- <el-button size="mini" :type="scope.row.isCollected ? 'warning' : 'info'"
-            @click="toggleCollection(scope.row)" v-if="user.role == 2"
-            :icon="scope.row.isCollected ? 'StarFilled' : 'Star'">
-            {{ scope.row.isCollected ? '已收藏' : '收藏' }}
-          </el-button> -->
-          <!-- 收藏图标 - 修复版 -->
-          <el-tooltip :content="scope.row.isCollected ? '取消收藏' : '收藏'" placement="top">
-            <div @click="toggleCollection(scope.row)"
-                 style="display: inline-block; margin: 0 15px; vertical-align: middle; line-height: 1; position: relative; top: -1px;">
-              <el-icon :style="{
+            </el-image>
+            <span v-else style="color: #909399; font-size: 12px;">无封面</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="isbn" label="图书编号" sortable />
+        <el-table-column prop="name" label="图书名称">
+          <template v-slot="scope">
+            <el-button type="text" @click="showDetail(scope.row)" style="color: #409EFF; font-weight: 500;">
+              {{ scope.row.name }}
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop="author" label="作者" />
+        <el-table-column prop="publisher" label="出版社" />
+        <el-table-column label="出版日期" width="100">
+          <template v-slot="scope">
+            {{ getYear(scope.row.createTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="剩余可借" width="100">
+          <template v-slot="scope">
+            <el-tag :type="getAvailableQuantity(scope.row) > 0 ? 'success' : 'info'">
+              {{ getAvailableQuantity(scope.row) }} 本
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+          <template v-slot="scope">
+            <el-tag v-if="getAvailableQuantity(scope.row) <= 0" type="warning">不可借阅</el-tag>
+            <el-tag v-else type="success">可借阅</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="200">
+          <template v-slot="scope">
+            <el-button size="mini" @click="handleEdit(scope.row)" v-if="user.role == 1">修改</el-button>
+            <el-popconfirm title="确认删除?" @confirm="handleDelete(scope.row.id)" v-if="user.role == 1">
+              <template #reference>
+                <el-button type="danger" size="mini">删除</el-button>
+              </template>
+            </el-popconfirm>
+            <el-button size="mini" @click="handlelend(scope.row)" v-if="user.role == 2"
+              :disabled="getAvailableQuantity(scope.row) <= 0">借阅</el-button>
+            <el-popconfirm title="确认还书?" @confirm="handleReturn(scope.row)" v-if="user.role == 2">
+              <template #reference>
+                <el-button type="danger" size="mini" :disabled="(this.isbnArray.indexOf(scope.row.isbn)) == -1">还书</el-button>
+              </template>
+            </el-popconfirm>
+            <!-- <el-button size="mini" :type="scope.row.isCollected ? 'warning' : 'info'"
+              @click="toggleCollection(scope.row)" v-if="user.role == 2"
+              :icon="scope.row.isCollected ? 'StarFilled' : 'Star'">
+              {{ scope.row.isCollected ? '已收藏' : '收藏' }}
+            </el-button> -->
+            <!-- 收藏图标 - 修复版 -->
+            <el-tooltip :content="scope.row.isCollected ? '取消收藏' : '收藏'" placement="top">
+              <div @click="toggleCollection(scope.row)"
+                style="display: inline-block; margin: 0 15px; vertical-align: middle; line-height: 1; position: relative; top: -1px;">
+                <el-icon :style="{
                   fontSize: '25px',
                   width: '25px',
                   height: '25px',
@@ -137,27 +137,27 @@
                   position: 'relative',
                   top: 0
                 }" :class="{ 'icon-hover': !scope.row.isCollected, 'icon-fixed': true }" v-if="user.role == 2">
-                <StarFilled v-if="scope.row.isCollected" />
-                <Star v-else />
-              </el-icon>
-            </div>
-          </el-tooltip>
-        </template>
-      </el-table-column>
-    </el-table>
+                  <StarFilled v-if="scope.row.isCollected" />
+                  <Star v-else />
+                </el-icon>
+              </div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
 
     <!-- 图书详情对话框 -->
     <el-dialog v-model="dialogVisibleDetail" title="图书详情" width="800px">
       <div class="book-detail-container">
         <!-- 左侧图片区域 -->
         <div class="book-image-section">
-          <el-image
-              v-if="detailBook.bookPicture && detailBook.bookPicture.trim()"
-              :src="getImageUrl(detailBook.bookPicture)"
-              class="book-cover-image"
-              fit="contain"
-              :preview-src-list="[getImageUrl(detailBook.bookPicture)]"
-              preview-teleported>
+          <el-image 
+            v-if="detailBook.bookPicture && detailBook.bookPicture.trim()"
+            :src="getImageUrl(detailBook.bookPicture)" 
+            class="book-cover-image"
+            fit="contain"
+            :preview-src-list="[getImageUrl(detailBook.bookPicture)]"
+            preview-teleported>
           </el-image>
           <div v-else class="book-cover-placeholder">
             <el-icon style="font-size: 48px; color: #c0c4cc;"><Picture /></el-icon>
@@ -167,42 +167,42 @@
         <!-- 右侧信息区域 -->
         <div class="book-info-section">
           <el-descriptions :column="1" border>
-            <el-descriptions-item label="图书编号" label-class-name="detail-label">
-              {{ detailBook.isbn }}
-            </el-descriptions-item>
-            <el-descriptions-item label="图书名称" label-class-name="detail-label">
-              {{ detailBook.name }}
-            </el-descriptions-item>
-            <el-descriptions-item label="价格" label-class-name="detail-label">
-              ¥{{ detailBook.price }}
-            </el-descriptions-item>
-            <el-descriptions-item label="作者" label-class-name="detail-label">
-              {{ detailBook.author }}
-            </el-descriptions-item>
-            <el-descriptions-item label="出版社" label-class-name="detail-label">
-              {{ detailBook.publisher }}
-            </el-descriptions-item>
-            <el-descriptions-item label="出版时间" label-class-name="detail-label">
-              {{ detailBook.createTime }}
-            </el-descriptions-item>
-            <el-descriptions-item label="馆藏总数" label-class-name="detail-label">
-              {{ detailBook.totalQuantity || 0 }} 本
-            </el-descriptions-item>
-            <el-descriptions-item label="已借出" label-class-name="detail-label">
-              {{ detailBook.borrowedQuantity || 0 }} 本
-            </el-descriptions-item>
-            <el-descriptions-item label="可借阅" label-class-name="detail-label">
-              <el-tag :type="getAvailableQuantity(detailBook) > 0 ? 'success' : 'warning'">
-                {{ getAvailableQuantity(detailBook) }} 本
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="累计借阅次数" label-class-name="detail-label">
-              {{ detailBook.borrowNum || 0 }} 次
-            </el-descriptions-item>
-            <el-descriptions-item label="当前状态" label-class-name="detail-label">
-              <el-tag v-if="getAvailableQuantity(detailBook) <= 0" type="warning">不可借阅</el-tag>
-              <el-tag v-else type="success">可借阅</el-tag>
-            </el-descriptions-item>
+        <el-descriptions-item label="图书编号" label-class-name="detail-label">
+          {{ detailBook.isbn }}
+        </el-descriptions-item>
+        <el-descriptions-item label="图书名称" label-class-name="detail-label">
+          {{ detailBook.name }}
+        </el-descriptions-item>
+        <el-descriptions-item label="价格" label-class-name="detail-label">
+          ¥{{ detailBook.price }}
+        </el-descriptions-item>
+        <el-descriptions-item label="作者" label-class-name="detail-label">
+          {{ detailBook.author }}
+        </el-descriptions-item>
+        <el-descriptions-item label="出版社" label-class-name="detail-label">
+          {{ detailBook.publisher }}
+        </el-descriptions-item>
+        <el-descriptions-item label="出版时间" label-class-name="detail-label">
+          {{ detailBook.createTime }}
+        </el-descriptions-item>
+        <el-descriptions-item label="馆藏总数" label-class-name="detail-label">
+          {{ detailBook.totalQuantity || 0 }} 本
+        </el-descriptions-item>
+        <el-descriptions-item label="已借出" label-class-name="detail-label">
+          {{ detailBook.borrowedQuantity || 0 }} 本
+        </el-descriptions-item>
+        <el-descriptions-item label="可借阅" label-class-name="detail-label">
+          <el-tag :type="getAvailableQuantity(detailBook) > 0 ? 'success' : 'warning'">
+            {{ getAvailableQuantity(detailBook) }} 本
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="累计借阅次数" label-class-name="detail-label">
+          {{ detailBook.borrowNum || 0 }} 次
+        </el-descriptions-item>
+        <el-descriptions-item label="当前状态" label-class-name="detail-label">
+          <el-tag v-if="getAvailableQuantity(detailBook) <= 0" type="warning">不可借阅</el-tag>
+          <el-tag v-else type="success">可借阅</el-tag>
+        </el-descriptions-item>
           </el-descriptions>
         </div>
       </div>
@@ -215,7 +215,7 @@
 
     <!--测试,通知对话框-->
     <el-dialog v-model="dialogVisible3" v-if="numOfOutDataBook != 0" title="逾期详情" width="50%"
-               :before-close="handleClose">
+      :before-close="handleClose">
       <el-table :data="outDateBook" style="width: 100%">
         <el-table-column prop="isbn" label="图书编号" />
         <el-table-column prop="bookName" label="书名" />
@@ -232,8 +232,8 @@
     <!--    分页-->
     <div style="margin: 10px 0">
       <el-pagination v-model:currentPage="currentPage" :page-sizes="[5, 10, 20]" :page-size="pageSize"
-                     layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange">
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange">
       </el-pagination>
 
       <el-dialog v-model="dialogVisible" title="上架书籍" width="800px">
@@ -242,11 +242,11 @@
           <div class="book-image-section">
             <div class="upload-section-title">图书封面</div>
             <el-upload
-                class="avatar-uploader-large"
-                :http-request="handleUpload"
-                :show-file-list="false"
-                :before-upload="beforeUpload"
-                accept="image/*">
+              class="avatar-uploader-large"
+              :http-request="handleUpload"
+              :show-file-list="false"
+              :before-upload="beforeUpload"
+              accept="image/*">
               <img v-if="form.bookPicture" :src="getImageUrl(form.bookPicture)" class="avatar-large" />
               <div v-else class="upload-placeholder">
                 <el-icon class="upload-icon"><Plus /></el-icon>
@@ -276,13 +276,13 @@
                 <el-input v-model="form.publisher" placeholder="请输入出版社"></el-input>
               </el-form-item>
               <el-form-item label="出版时间">
-                <el-date-picker
-                    value-format="YYYY-MM-DD"
-                    type="date"
-                    style="width: 100%"
-                    clearable
-                    v-model="form.createTime"
-                    placeholder="请选择出版时间">
+                <el-date-picker 
+                  value-format="YYYY-MM-DD" 
+                  type="date" 
+                  style="width: 100%" 
+                  clearable
+                  v-model="form.createTime"
+                  placeholder="请选择出版时间">
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="馆藏数量">
@@ -305,11 +305,11 @@
           <div class="book-image-section">
             <div class="upload-section-title">图书封面</div>
             <el-upload
-                class="avatar-uploader-large"
-                :http-request="handleUpload"
-                :show-file-list="false"
-                :before-upload="beforeUpload"
-                accept="image/*">
+              class="avatar-uploader-large"
+              :http-request="handleUpload"
+              :show-file-list="false"
+              :before-upload="beforeUpload"
+              accept="image/*">
               <img v-if="form.bookPicture" :src="getImageUrl(form.bookPicture)" class="avatar-large" />
               <div v-else class="upload-placeholder">
                 <el-icon class="upload-icon"><Plus /></el-icon>
@@ -339,13 +339,13 @@
                 <el-input v-model="form.publisher" placeholder="请输入出版社"></el-input>
               </el-form-item>
               <el-form-item label="出版时间">
-                <el-date-picker
-                    value-format="YYYY-MM-DD"
-                    type="date"
-                    style="width: 100%"
-                    clearable
-                    v-model="form.createTime"
-                    placeholder="请选择出版时间">
+                <el-date-picker 
+                  value-format="YYYY-MM-DD" 
+                  type="date" 
+                  style="width: 100%" 
+                  clearable
+                  v-model="form.createTime"
+                  placeholder="请选择出版时间">
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="馆藏总数">
@@ -520,7 +520,7 @@ export default {
         this.load()
       })
     },
-    handleReturn(row) {
+  handleReturn(row) {
       // 从借阅记录中找到对应的记录
       const borrowRecord = this.bookData.find(record => record.isbn === row.isbn);
       if (!borrowRecord) {
@@ -535,20 +535,20 @@ export default {
         borrowedQuantity,
         status: '1'
       };
-
+      
       request.put("/book", bookUpdate).then(updateRes => {
         if (updateRes.code !== 0 && updateRes.code !== '0') {
           ElMessage.error(updateRes.msg || '更新图书状态失败');
           return;
         }
-
+        
         // 2) 更新借阅历史为已归还
         const lendPayload = {
           isbn: row.isbn,
           readerId: this.user.id,
           lendTime: borrowRecord.lendTime
         };
-
+        
         request.put("/LendRecord1", lendPayload).then(() => {
           // 3) 删除当前借阅记录（bookwithuser）
           const payload = {
@@ -556,7 +556,7 @@ export default {
             readerId: this.user.id,
             lendTime: borrowRecord.lendTime
           };
-
+          
           request.post("bookwithuser/deleteRecord", payload).then(res => {
             if (res.code == 0 || res.code === '0') {
               ElMessage.success("归还成功");
@@ -670,12 +670,12 @@ export default {
             }
           }).then(borrowRes => {
             const borrowedCount = (borrowRes.data && borrowRes.data.total) ? borrowRes.data.total : 0;
-
+            
             if (this.form.totalQuantity < borrowedCount) {
               ElMessage.warning(`馆藏总数不能小于已借阅数量（${borrowedCount}本），请重新设置`);
               return;
             }
-
+            
             // 验证通过，执行更新
             this.updateBook();
           }).catch(error => {
@@ -750,20 +750,20 @@ export default {
       if (row.isCollected) {
         // 当前是“已收藏”，调用“取消收藏”接口
         request.delete("/bookCollection/cancel", { params: params })
-            .then(res => {
-              // 请求成功后的回调
-              if (res.code === '0') {
-                ElMessage.success("已取消收藏");
-                row.isCollected = false; // 更新UI
-              } else {
-                ElMessage.error(res.msg || "操作失败");
-              }
-            })
-            .catch(error => {
-              // 请求失败后的回调
-              console.error("取消收藏失败", error);
-              ElMessage.error("请求失败");
-            });
+          .then(res => {
+            // 请求成功后的回调
+            if (res.code === '0') {
+              ElMessage.success("已取消收藏");
+              row.isCollected = false; // 更新UI
+            } else {
+              ElMessage.error(res.msg || "操作失败");
+            }
+          })
+          .catch(error => {
+            // 请求失败后的回调
+            console.error("取消收藏失败", error);
+            ElMessage.error("请求失败");
+          });
       } else {
         // 当前是“未收藏”，调用“添加收藏”接口
         const data = {
@@ -771,20 +771,20 @@ export default {
           bookId: row.id
         };
         request.post("/bookCollection/add", data)
-            .then(res => {
-              // 请求成功后的回调
-              if (res.code === '0') {
-                ElMessage.success("收藏成功");
-                row.isCollected = true; // 更新UI
-              } else {
-                ElMessage.error(res.msg || "操作失败");
-              }
-            })
-            .catch(error => {
-              // 请求失败后的回调
-              console.error("收藏失败", error);
-              ElMessage.error("请求失败");
-            });
+          .then(res => {
+            // 请求成功后的回调
+            if (res.code === '0') {
+              ElMessage.success("收藏成功");
+              row.isCollected = true; // 更新UI
+            } else {
+              ElMessage.error(res.msg || "操作失败");
+            }
+          })
+          .catch(error => {
+            // 请求失败后的回调
+            console.error("收藏失败", error);
+            ElMessage.error("请求失败");
+          });
       }
     },
     // 图片上传相关方法
@@ -802,7 +802,7 @@ export default {
     handleUpload(options) {
       const formData = new FormData();
       formData.append('file', options.file);
-
+      
       // 使用axios上传，这样可以自动添加token
       // 注意：不需要手动设置Content-Type，让浏览器自动设置
       request.post('/file/upload', formData).then(response => {
@@ -1026,12 +1026,12 @@ export default {
   .book-form-container {
     flex-direction: column;
   }
-
+  
   .book-image-section {
     flex: none;
     width: 100%;
   }
-
+  
   .avatar-uploader-large {
     width: 100%;
     max-width: 280px;

@@ -41,4 +41,4 @@ mybatis-plus:
     # 开启驼峰命名转换
     map-underscore-to-camel-case: true
     # 指定NULL值的处理方式
-    jdbc-type-for-null: 'null'
+    jdbc-type-for-null: NULL
