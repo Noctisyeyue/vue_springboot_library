@@ -19,6 +19,7 @@ CREATE TABLE "user" (
 );
 
 -- 2. 创建图书表 (book)
+--status 0不可借阅--1可借阅
 DROP TABLE book CASCADE CONSTRAINTS;
 
 CREATE TABLE book (
@@ -55,7 +56,8 @@ CREATE TABLE bookwithuser (
 );
 
 -- 4. 创建借阅历史表 (lend_record)
--- 注意：联合主键包含读者ID、图书ID和借阅时间
+-- 联合主键包含读者ID、图书ID和借阅时间
+--status 0未归还  1已归还
 DROP TABLE lend_record CASCADE CONSTRAINTS;
 
 CREATE TABLE lend_record (
