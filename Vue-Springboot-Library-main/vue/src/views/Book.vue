@@ -676,7 +676,7 @@ export default {
       }
 
       // 先准备借阅记录数据
-      let startDate = moment(new Date()).format("yyyy-MM-DD HH:mm:ss");
+      let startDate = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
       let form3 = {};
       form3.bookId = row.id;  // 添加图书ID
       form3.isbn = row.isbn;
@@ -685,9 +685,9 @@ export default {
       form3.readerId = this.user.id;
       form3.lendTime = startDate;
       // 计算应还日期（借阅日期 + 30天）
-      let nowDate = new Date(startDate);
+      let nowDate = new Date();
       nowDate.setDate(nowDate.getDate() + 30);
-      form3.deadTime = moment(nowDate).format("yyyy-MM-DD HH:mm:ss");
+      form3.deadTime = moment(nowDate).format("YYYY-MM-DD HH:mm:ss");
       form3.prolong = 1;
 
       // 先检查是否已借阅该书
@@ -709,16 +709,22 @@ export default {
           if (bookRes.code == 0) {
             ElMessage.success('借阅成功')
 
-            // 添加到历史借阅记录
+            // 添加到历史借阅记录（lend_record表）
+            // 注意：只传递后端实体类LendRecord拥有的字段
             this.form2.status = "0"  // 状态：0表示借阅中
             this.form2.bookId = row.id  // 添加图书ID - 这是必需的字段
-            this.form2.isbn = row.isbn
-            this.form2.bookname = row.name
             this.form2.readerId = this.user.id
-            this.form2.borrowNum = (row.borrowNum || 0) + 1
             this.form2.lendTime = startDate
 
-            request.post("/LendRecord", this.form2).then(() => {
+            request.post("/LendRecord", this.form2).then(res => {
+              if (res.code === '0' || res.code === 0) {
+                console.log('借阅历史记录保存成功')
+              } else {
+                console.error('借阅历史记录保存失败:', res.msg)
+              }
+              this.load()
+            }).catch(err => {
+              console.error('借阅历史记录请求失败:', err)
               this.load()
             })
           } else {
