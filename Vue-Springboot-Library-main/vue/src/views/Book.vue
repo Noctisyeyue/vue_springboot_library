@@ -1,41 +1,50 @@
 <template>
-  <div class="home" style="padding: 10px">
+<!-- 图书管理页面容器：包含搜索、表格展示、分页和对话框 -->
+<div style="padding: 10px">
 
-    <!-- 搜索-->
+    <!-- 图书搜索区域：支持多条件查询 -->
     <div style="margin: 10px 0;">
       <el-form inline="true" size="small">
+        <!-- 图书编号搜索框：包含图标 -->
         <el-form-item label="图书编号">
           <el-input v-model="search1" placeholder="请输入图书编号" clearable>
-            <template #prefix><el-icon class="el-input__icon">
-                <search />
-              </el-icon></template>
+            <template #prefix>
+              <el-icon class="el-input__icon">
+                <search />  <!-- 搜索图标 -->
+              </el-icon>
+            </template>
           </el-input>
         </el-form-item>
+        <!-- 图书名称搜索框：包含图标 -->
         <el-form-item label="图书名称">
           <el-input v-model="search2" placeholder="请输入图书名称" clearable>
             <template #prefix><el-icon class="el-input__icon">
-                <search />
+                <search />  <!-- 搜索图标 -->
               </el-icon></template>
           </el-input>
         </el-form-item>
+        <!-- 作者搜索框：包含图标 -->
         <el-form-item label="作者">
           <el-input v-model="search3" placeholder="请输入作者" clearable>
             <template #prefix><el-icon class="el-input__icon">
-                <search />
+                <search />  <!-- 搜索图标 -->
               </el-icon></template>
           </el-input>
         </el-form-item>
+        <!-- 查询按钮：触发搜索方法 -->
         <el-form-item>
           <el-button type="primary" style="margin-left: 1%" @click="load" size="mini">
             <svg-icon iconClass="search" />查询
           </el-button>
         </el-form-item>
+        <!-- 重置按钮：清空搜索条件 -->
         <el-form-item>
           <el-button size="mini" type="danger" @click="clear">重置</el-button>
         </el-form-item>
+        <!-- 逾期通知按钮：仅在有逾期图书时显示 -->
         <el-form-item style="float: right" v-if="numOfOutDataBook != 0">
           <el-popconfirm confirm-button-text="查看" cancel-button-text="取消" :icon="InfoFilled" icon-color="red"
-            title="您有图书已逾期，请尽快归还" @confirm="toLook">
+            title="您有图书已逾期，请尽快归还" @confirm="toLook"><!--	@confirm点击确认按钮后执行的方法-->
             <template #reference>
               <el-button type="warning">逾期通知</el-button>
             </template>
@@ -43,24 +52,28 @@
         </el-form-item>
       </el-form>
     </div>
-    <!-- 按钮-->
+    <!-- 操作按钮区域：上架、批量删除等 -->
     <div style="margin: 10px 0;">
+      <!-- 上架按钮：仅管理员可见 -->
       <el-button type="primary" @click="add" v-if="user.role == 1">上架</el-button>
+      <!-- 批量删除按钮：仅管理员可见 -->
       <el-popconfirm title="确认删除?" @confirm="deleteBatch" v-if="user.role == 1">
         <template #reference>
-          <el-button type="danger" size="mini">批量删除</el-button>
+          <el-button type="danger">批量删除</el-button>
         </template>
       </el-popconfirm>
     </div>
-    <!-- 数据字段-->
+    <!-- 图书数据表格：展示图书列表 -->
     <el-table :data="tableData" stripe border="true" @selection-change="handleSelectionChange" style="width: 100%;">
+        <!-- 复选框列：仅管理员可见，用于批量操作 -->
         <el-table-column v-if="user.role == 1" type="selection" width="55">
         </el-table-column>
+        <!-- 封面列：显示图书封面图片，支持预览 -->
         <el-table-column label="封面" width="80">
           <template v-slot="scope">
-            <el-image 
+            <el-image
               v-if="scope.row.bookPicture"
-              :src="getImageUrl(scope.row.bookPicture)" 
+              :src="getImageUrl(scope.row.bookPicture)"
               style="width: 60px; height: 80px; border-radius: 4px;"
               fit="cover"
               :preview-src-list="[getImageUrl(scope.row.bookPicture)]"
@@ -69,7 +82,9 @@
             <span v-else style="color: #909399; font-size: 12px;">无封面</span>
           </template>
         </el-table-column>
+        <!-- 图书编号列：支持排序 -->
         <el-table-column prop="isbn" label="图书编号" sortable />
+        <!-- 图书名称列：可点击查看详情 -->
         <el-table-column prop="name" label="图书名称">
           <template v-slot="scope">
             <el-button type="text" @click="showDetail(scope.row)" style="color: #409EFF; font-weight: 500;">
@@ -77,13 +92,17 @@
             </el-button>
           </template>
         </el-table-column>
+        <!-- 作者列 -->
         <el-table-column prop="author" label="作者" />
+        <!-- 出版社列 -->
         <el-table-column prop="publisher" label="出版社" />
+        <!-- 出版日期列：只显示年份 -->
         <el-table-column label="出版日期" width="100">
           <template v-slot="scope">
             {{ getYear(scope.row.createTime) }}
           </template>
         </el-table-column>
+        <!-- 剩余可借列：动态计算并显示库存状态 -->
         <el-table-column label="剩余可借" width="100">
           <template v-slot="scope">
             <el-tag :type="getAvailableQuantity(scope.row) > 0 ? 'success' : 'info'">
@@ -91,33 +110,34 @@
             </el-tag>
           </template>
         </el-table-column>
+        <!-- 状态列：显示图书是否可借阅 -->
         <el-table-column prop="status" label="状态" width="100">
           <template v-slot="scope">
             <el-tag v-if="getAvailableQuantity(scope.row) <= 0" type="warning">不可借阅</el-tag>
             <el-tag v-else type="success">可借阅</el-tag>
           </template>
         </el-table-column>
+        <!-- 操作列：包含修改、删除、借阅、还书、收藏按钮 -->
         <el-table-column fixed="right" label="操作" width="200">
           <template v-slot="scope">
+            <!-- 修改按钮：仅管理员可见 -->
             <el-button size="mini" @click="handleEdit(scope.row)" v-if="user.role == 1">修改</el-button>
+            <!-- 删除按钮：仅管理员可见，需确认 -->
             <el-popconfirm title="确认删除?" @confirm="handleDelete(scope.row.id)" v-if="user.role == 1">
               <template #reference>
                 <el-button type="danger" size="mini">删除</el-button>
               </template>
             </el-popconfirm>
+            <!-- 借阅按钮：仅普通用户可见，无库存时禁用 -->
             <el-button size="mini" @click="handlelend(scope.row)" v-if="user.role == 2"
               :disabled="getAvailableQuantity(scope.row) <= 0">借阅</el-button>
+            <!-- 还书按钮：仅普通用户可见，需确认，已借阅时启用 -->
             <el-popconfirm title="确认还书?" @confirm="handleReturn(scope.row)" v-if="user.role == 2">
               <template #reference>
                 <el-button type="danger" size="mini" :disabled="(this.isbnArray.indexOf(scope.row.isbn)) == -1">还书</el-button>
               </template>
             </el-popconfirm>
-            <!-- <el-button size="mini" :type="scope.row.isCollected ? 'warning' : 'info'"
-              @click="toggleCollection(scope.row)" v-if="user.role == 2"
-              :icon="scope.row.isCollected ? 'StarFilled' : 'Star'">
-              {{ scope.row.isCollected ? '已收藏' : '收藏' }}
-            </el-button> -->
-            <!-- 收藏图标 - 修复版 -->
+            <!-- 收藏图标：仅普通用户可见，点击可切换收藏状态 -->
             <el-tooltip :content="scope.row.isCollected ? '取消收藏' : '收藏'" placement="top">
               <div @click="toggleCollection(scope.row)"
                 style="display: inline-block; margin: 0 15px; vertical-align: middle; line-height: 1; position: relative; top: -1px;">
@@ -125,7 +145,7 @@
                   fontSize: '25px',
                   width: '25px',
                   height: '25px',
-                  color: scope.row.isCollected ? '#ffc107' : '#dcdfe6',
+                  color: scope.row.isCollected ? '#ffc107' : '#dcdfe6',  /* 已收藏为黄色，未收藏为灰色 */
                   transition: 'all 0.3s ease',
                   cursor: 'pointer',
                   borderRadius: '4px',
@@ -137,8 +157,8 @@
                   position: 'relative',
                   top: 0
                 }" :class="{ 'icon-hover': !scope.row.isCollected, 'icon-fixed': true }" v-if="user.role == 2">
-                  <StarFilled v-if="scope.row.isCollected" />
-                  <Star v-else />
+                  <StarFilled v-if="scope.row.isCollected" />  <!-- 实心星星：已收藏 -->
+                  <Star v-else />  <!-- 空心星星：未收藏 -->
                 </el-icon>
               </div>
             </el-tooltip>
@@ -146,25 +166,25 @@
         </el-table-column>
       </el-table>
 
-    <!-- 图书详情对话框 -->
+    <!-- 图书详情对话框：展示图书完整信息 -->
     <el-dialog v-model="dialogVisibleDetail" title="图书详情" width="800px">
       <div class="book-detail-container">
-        <!-- 左侧图片区域 -->
-        <div class="book-image-section">
-          <el-image 
+        <!-- 左侧图片区域：显示图书封面 -->
+        <div class="book-image-section"><!--去除字符串首尾的空格-->
+          <el-image
             v-if="detailBook.bookPicture && detailBook.bookPicture.trim()"
-            :src="getImageUrl(detailBook.bookPicture)" 
+            :src="getImageUrl(detailBook.bookPicture)"
             class="book-cover-image"
             fit="contain"
             :preview-src-list="[getImageUrl(detailBook.bookPicture)]"
             preview-teleported>
           </el-image>
           <div v-else class="book-cover-placeholder">
-            <el-icon style="font-size: 48px; color: #c0c4cc;"><Picture /></el-icon>
+            <el-icon style="font-size: 48px; color: #c0c4cc;"><Picture /></el-icon>  <!-- 图片占位图标 -->
             <span>暂无封面图片</span>
           </div>
         </div>
-        <!-- 右侧信息区域 -->
+        <!-- 右侧信息区域：显示图书详细属性 -->
         <div class="book-info-section">
           <el-descriptions :column="1" border>
         <el-descriptions-item label="图书编号" label-class-name="detail-label">
@@ -213,7 +233,7 @@
       </template>
     </el-dialog>
 
-    <!--测试,通知对话框-->
+    <!-- 逾期详情对话框：展示用户逾期的借阅记录 -->
     <el-dialog v-model="dialogVisible3" v-if="numOfOutDataBook != 0" title="逾期详情" width="50%"
       :before-close="handleClose">
       <el-table :data="outDateBook" style="width: 100%">
@@ -229,16 +249,17 @@
         </span>
       </template>
     </el-dialog>
-    <!--    分页-->
+    <!-- 分页组件：支持切换每页数量和页码 -->
     <div style="margin: 10px 0">
       <el-pagination v-model:currentPage="currentPage" :page-sizes="[5, 10, 20]" :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange">
       </el-pagination>
 
+      <!-- 上架书籍对话框：新增图书信息 -->
       <el-dialog v-model="dialogVisible" title="上架书籍" width="800px">
         <div class="book-form-container">
-          <!-- 左侧图片上传区域 -->
+          <!-- 左侧图片上传区域：上传图书封面 -->
           <div class="book-image-section">
             <div class="upload-section-title">图书封面</div>
             <el-upload
@@ -249,7 +270,7 @@
               accept="image/*">
               <img v-if="form.bookPicture" :src="getImageUrl(form.bookPicture)" class="avatar-large" />
               <div v-else class="upload-placeholder">
-                <el-icon class="upload-icon"><Plus /></el-icon>
+                <el-icon class="upload-icon"><Plus /></el-icon>  <!-- 加号图标 -->
                 <div class="upload-text">点击上传封面</div>
               </div>
             </el-upload>
@@ -257,7 +278,7 @@
               支持jpg、png、gif格式<br/>大小不超过5MB
             </div>
           </div>
-          <!-- 右侧表单区域 -->
+          <!-- 右侧表单区域：输入图书详细信息 -->
           <div class="book-form-section">
             <el-form :model="form" label-width="100px">
               <el-form-item label="图书编号">
@@ -276,10 +297,10 @@
                 <el-input v-model="form.publisher" placeholder="请输入出版社"></el-input>
               </el-form-item>
               <el-form-item label="出版时间">
-                <el-date-picker 
-                  value-format="YYYY-MM-DD" 
-                  type="date" 
-                  style="width: 100%" 
+                <el-date-picker
+                  value-format="YYYY-MM-DD"
+                  type="date"
+                  style="width: 100%"
                   clearable
                   v-model="form.createTime"
                   placeholder="请选择出版时间">
@@ -299,9 +320,10 @@
         </template>
       </el-dialog>
 
+      <!-- 修改书籍信息对话框：编辑已有图书 -->
       <el-dialog v-model="dialogVisible2" title="修改书籍信息" width="800px">
         <div class="book-form-container">
-          <!-- 左侧图片上传区域 -->
+          <!-- 左侧图片上传区域：更新图书封面 -->
           <div class="book-image-section">
             <div class="upload-section-title">图书封面</div>
             <el-upload
@@ -310,9 +332,11 @@
               :show-file-list="false"
               :before-upload="beforeUpload"
               accept="image/*">
+              <!-- 有图片时显示图片 -->
               <img v-if="form.bookPicture" :src="getImageUrl(form.bookPicture)" class="avatar-large" />
+              <!-- 没有图片时显示上传按钮 -->
               <div v-else class="upload-placeholder">
-                <el-icon class="upload-icon"><Plus /></el-icon>
+                <el-icon class="upload-icon"><Plus /></el-icon>  <!-- 加号图标 -->
                 <div class="upload-text">点击上传封面</div>
               </div>
             </el-upload>
@@ -320,7 +344,7 @@
               支持jpg、png、gif格式<br/>大小不超过5MB
             </div>
           </div>
-          <!-- 右侧表单区域 -->
+          <!-- 右侧表单区域：编辑图书详细信息 -->
           <div class="book-form-section">
             <el-form :model="form" label-width="100px">
               <el-form-item label="图书编号">
@@ -339,10 +363,11 @@
                 <el-input v-model="form.publisher" placeholder="请输入出版社"></el-input>
               </el-form-item>
               <el-form-item label="出版时间">
-                <el-date-picker 
-                  value-format="YYYY-MM-DD" 
-                  type="date" 
-                  style="width: 100%" 
+              <!--Element Plus 的日期选择器-->
+                <el-date-picker
+                  value-format="YYYY-MM-DD"
+                  type="date"
+                  style="width: 100%"
                   clearable
                   v-model="form.createTime"
                   placeholder="请选择出版时间">
@@ -366,33 +391,44 @@
 </template>
 
 <script>
+// 导入所需模块
 // @ is an alias to /src
-import request from "../utils/request";
-import { ElMessage } from "element-plus";
-import moment from "moment";
-import { Plus, Picture } from "@element-plus/icons-vue";
+import request from "../utils/request";        // HTTP 请求工具
+import { ElMessage } from "element-plus";     // Element Plus 消息提示组件
+import moment from "moment";                 // 日期处理库
+import { Plus, Picture } from "@element-plus/icons-vue";  // Element Plus 图标组件
+
 export default {
-  components: {
-    Plus,
-    Picture
+  name: 'Book',
+  components: {  // 注册自定义组件
+    Plus,       // 加号图标（用于上传区域）
+    Picture     // 图片图标（用于占位显示）
   },
   created() {
-    let userStr = sessionStorage.getItem("user") || "{}"
-    this.user = JSON.parse(userStr)
-    // 初始化上传URL（直接使用后端服务地址）
+    // 组件创建时执行的初始化操作
+    let userStr = sessionStorage.getItem("user") || "{}"  // 从 sessionStorage 获取用户信息
+    this.user = JSON.parse(userStr)  // 解析用户信息
+    // 初始化上传URL
     this.uploadUrl = 'http://localhost:9090/file/upload';
-    this.load()
+    this.load()  // 加载图书列表数据
   },
-  name: 'Book',
   methods: {
-    // 获取年份
+    /**
+     * 获取年份
+     * @param {String} dateStr - 日期字符串
+     * @returns {String} 格式化后的年份（如：2023年）
+     */
     getYear(dateStr) {
       if (!dateStr) return '-';
-      const year = new Date(dateStr).getFullYear();
-      return isNaN(year) ? '-' : year + '年';
+      const year = new Date(dateStr).getFullYear();//获取年份（4位数字）
+      return isNaN(year) ? '-' : year + '年';//Not a Numbe  是无效数字返回 -，否则加 "年"
     },
 
-    // 计算可借阅数量
+    /**
+     * 计算可借阅数量
+     * @param {Object} book - 图书对象
+     * @returns {Number} 可借阅数量 = 馆藏总数 - 已借出数量
+     */
     getAvailableQuantity(book) {
       if (!book.totalQuantity || !book.borrowedQuantity) {
         return book.totalQuantity || 0;
@@ -400,15 +436,26 @@ export default {
       return book.totalQuantity - book.borrowedQuantity;
     },
 
-    // 显示图书详情
+    /**
+     * 显示图书详情对话框
+     * @param {Object} row - 当前行图书数据
+     */
     showDetail(row) {
-      this.detailBook = JSON.parse(JSON.stringify(row))
-      this.dialogVisibleDetail = true
+      this.detailBook = JSON.parse(JSON.stringify(row))  // 深拷贝图书数据
+      this.dialogVisibleDetail = true  // 显示详情对话框
     },
 
+    /**
+     * 表格复选框选择变化事件
+     * @param {Array} val - 选中的行数据数组
+     */
     handleSelectionChange(val) {
-      this.ids = val.map(v => v.id)
+      this.ids = val.map(v => v.id)  // 提取选中行的 ID 数组
     },
+
+    /**
+     * 批量删除图书
+     */
     deleteBatch() {
       if (!this.ids.length) {
         ElMessage.warning("请选择数据!")
@@ -417,14 +464,20 @@ export default {
       request.post("/book/deleteBatch", this.ids).then(res => {
         if (res.code === '0') {
           ElMessage.success("批量删除成功")
-          this.load()
+          this.load()  // 刷新列表
         }
         else {
           ElMessage.error(res.msg)
         }
       })
     },
-    // 修改 load 方法 (使用 .then() 链)
+
+    /**
+     * 加载图书列表数据
+     * 1. 获取图书分页列表
+     * 2. 如果是普通用户，获取借阅记录和收藏状态
+     * 3. 检查逾期图书
+     */
     load() {
       this.numOfOutDataBook = 0;
       this.outDateBook = [];
@@ -455,21 +508,23 @@ export default {
               search3: this.user.id,
             }
           }).then(res => {
-            this.bookData = res.data.records;
-            this.number = this.bookData.length;
+            this.bookData = res.data.records;  // 存储借阅记录
+            this.number = this.bookData.length;  // 当前借阅数量
             const nowDate = new Date();
             this.isbnArray = [];
+            // 遍历借阅记录，检查逾期情况
             for (let i = 0; i < this.number; i++) {
               this.isbnArray[i] = this.bookData[i].isbn;
               let dDate = new Date(this.bookData[i].deadTime);
               if (dDate < nowDate) {
+                // 发现逾期图书，添加到逾期列表
                 this.outDateBook.push({
                   isbn: this.bookData[i].isbn,
                   bookName: this.bookData[i].bookName,
                   deadTime: this.bookData[i].deadTime,
                   lendTime: this.bookData[i].lendTime,
                 });
-                this.numOfOutDataBook++;
+                this.numOfOutDataBook++;  // 逾期图书数量加 1
               }
             }
           });
@@ -502,6 +557,9 @@ export default {
       });
     },
 
+    /**
+     * 清空搜索条件并重新加载数据
+     */
     clear() {
       this.search1 = ""
       this.search2 = ""
@@ -509,6 +567,10 @@ export default {
       this.load()
     },
 
+    /**
+     * 删除单本图书
+     * @param {Number} id - 图书 ID
+     */
     handleDelete(id) {
       request.delete("book/" + id).then(res => {
         console.log(res)
@@ -520,7 +582,15 @@ export default {
         this.load()
       })
     },
-  handleReturn(row) {
+
+    /**
+     * 还书处理方法
+     * 1. 更新图书信息：已借阅数量 -1
+     * 2. 更新借阅历史为已归还
+     * 3. 删除当前借阅记录
+     * @param {Object} row - 当前行图书数据
+     */
+    handleReturn(row) {
       // 从借阅记录中找到对应的记录
       const borrowRecord = this.bookData.find(record => record.isbn === row.isbn);
       if (!borrowRecord) {
@@ -535,20 +605,20 @@ export default {
         borrowedQuantity,
         status: '1'
       };
-      
+
       request.put("/book", bookUpdate).then(updateRes => {
         if (updateRes.code !== 0 && updateRes.code !== '0') {
           ElMessage.error(updateRes.msg || '更新图书状态失败');
           return;
         }
-        
+
         // 2) 更新借阅历史为已归还
         const lendPayload = {
           isbn: row.isbn,
           readerId: this.user.id,
           lendTime: borrowRecord.lendTime
         };
-        
+
         request.put("/LendRecord1", lendPayload).then(() => {
           // 3) 删除当前借阅记录（bookwithuser）
           const payload = {
@@ -556,7 +626,7 @@ export default {
             readerId: this.user.id,
             lendTime: borrowRecord.lendTime
           };
-          
+
           request.post("bookwithuser/deleteRecord", payload).then(res => {
             if (res.code == 0 || res.code === '0') {
               ElMessage.success("归还成功");
@@ -578,11 +648,22 @@ export default {
         ElMessage.error("更新图书信息失败");
       });
     },
+
+    /**
+     * 借阅图书处理方法
+     * 1. 验证借阅条件（最大借阅数、逾期状态、库存）
+     * 2. 插入借阅记录
+     * 3. 更新图书信息
+     * 4. 添加到历史借阅记录
+     * @param {Object} row - 当前行图书数据
+     */
     handlelend(row) {
+      // 检查借阅数量限制（最多5本）
       if (this.number == 5) {
         ElMessage.warning("您不能再借阅更多的书籍了")
         return;
       }
+      // 检查是否有逾期图书
       if (this.numOfOutDataBook != 0) {
         ElMessage.warning("在您归还逾期书籍前不能再借阅书籍")
         return;
@@ -603,6 +684,7 @@ export default {
       form3.nickName = this.user.username;
       form3.readerId = this.user.id;
       form3.lendTime = startDate;
+      // 计算应还日期（借阅日期 + 30天）
       let nowDate = new Date(startDate);
       nowDate.setDate(nowDate.getDate() + 30);
       form3.deadTime = moment(nowDate).format("yyyy-MM-DD HH:mm:ss");
@@ -620,15 +702,15 @@ export default {
 
         // 借阅成功，继续更新图书信息
         this.form.id = row.id
-        this.form.borrowNum = (row.borrowNum || 0) + 1
-        this.form.borrowedQuantity = (row.borrowedQuantity || 0) + 1
+        this.form.borrowNum = (row.borrowNum || 0) + 1  // 累计借阅次数 +1
+        this.form.borrowedQuantity = (row.borrowedQuantity || 0) + 1  // 已借出数量 +1
 
         request.put("/book", this.form).then(bookRes => {
           if (bookRes.code == 0) {
             ElMessage.success('借阅成功')
 
             // 添加到历史借阅记录
-            this.form2.status = "0"
+            this.form2.status = "0"  // 状态：0表示借阅中
             this.form2.bookId = row.id  // 添加图书ID - 这是必需的字段
             this.form2.isbn = row.isbn
             this.form2.bookname = row.name
@@ -651,13 +733,24 @@ export default {
         })
       })
     },
+
+    /**
+     * 打开上架书籍对话框
+     */
     add() {
       this.dialogVisible = true
-      this.form = {}
+      this.form = {}  // 清空表单数据
     },
+
+    /**
+     * 保存图书信息（新增或修改）
+     * - 如果有 id 则为修改操作
+     * - 如果没有 id 则为新增操作
+     */
     save() {
       if (this.form.id) {
-        // 如果修改了馆藏总数，需要验证
+        // 修改操作
+        // 如果修改了馆藏总数，需要验证   检查 totalQuantity（馆藏总数）字段是否有值
         if (this.form.totalQuantity !== undefined && this.form.totalQuantity !== null) {
           // 查询bookwithuser表中该书的记录数（已借阅数量）
           request.get("/bookwithuser", {
@@ -670,12 +763,12 @@ export default {
             }
           }).then(borrowRes => {
             const borrowedCount = (borrowRes.data && borrowRes.data.total) ? borrowRes.data.total : 0;
-            
+
             if (this.form.totalQuantity < borrowedCount) {
               ElMessage.warning(`馆藏总数不能小于已借阅数量（${borrowedCount}本），请重新设置`);
-              return;
+              return;// 报错，停止保存
             }
-            
+
             // 验证通过，执行更新
             this.updateBook();
           }).catch(error => {
@@ -691,10 +784,10 @@ export default {
       }
       else {
         // 新增图书时初始化字段
-        this.form.borrowNum = 0
-        this.form.borrowedQuantity = 0
-        this.form.totalQuantity = this.form.totalQuantity || 1
-        this.form.status = 1
+        this.form.borrowNum = 0          // 累计借阅次数初始化为 0
+        this.form.borrowedQuantity = 0   // 已借出数量初始化为 0
+        this.form.totalQuantity = this.form.totalQuantity || 1  // 馆藏总数，默认为 1
+        this.form.status = 1             // 状态：1表示正常
 
         request.post("/book", this.form).then(res => {
           console.log(res)
@@ -709,6 +802,10 @@ export default {
         })
       }
     },
+
+    /**
+     * 更新图书信息
+     */
     updateBook() {
       request.put("/book", this.form).then(res => {
         console.log(res)
@@ -725,22 +822,45 @@ export default {
         this.dialogVisible2 = false
       })
     },
+
+    /**
+     * 打开修改书籍信息对话框
+     * @param {Object} row - 当前行图书数据
+     */
     handleEdit(row) {
-      this.form = JSON.parse(JSON.stringify(row))
+      this.form = JSON.parse(JSON.stringify(row))  // 深拷贝图书数据
       this.dialogVisible2 = true
     },
+
+    /**
+     * 分页大小变化事件
+     * @param {Number} pageSize - 新的每页数量
+     */
     handleSizeChange(pageSize) {
       this.pageSize = pageSize
       this.load()
     },
+
+    /**
+     * 当前页码变化事件
+     * @param {Number} pageNum - 新的页码
+     */
     handleCurrentChange(pageNum) {
       this.pageNum = pageNum
       this.load()
     },
+
+    /**
+     * 打开逾期详情对话框
+     */
     toLook() {
       this.dialogVisible3 = true;
     },
-    // 点击收藏按钮时触发
+
+    /**
+     * 切换收藏状态（收藏/取消收藏）
+     * @param {Object} row - 当前行图书数据
+     */
     toggleCollection(row) {
       const params = {
         readerId: this.user.id,
@@ -748,7 +868,7 @@ export default {
       };
 
       if (row.isCollected) {
-        // 当前是“已收藏”，调用“取消收藏”接口
+        // 当前是"已收藏"，调用"取消收藏"接口
         request.delete("/bookCollection/cancel", { params: params })
           .then(res => {
             // 请求成功后的回调
@@ -765,7 +885,7 @@ export default {
             ElMessage.error("请求失败");
           });
       } else {
-        // 当前是“未收藏”，调用“添加收藏”接口
+        // 当前是"未收藏"，调用"添加收藏"接口
         const data = {
           readerId: this.user.id,
           bookId: row.id
@@ -787,7 +907,14 @@ export default {
           });
       }
     },
-    // 图片上传相关方法
+
+    // ==================== 图片上传相关方法 ====================
+
+    /**
+     * 获取图片完整 URL
+     * @param {String} imagePath - 图片相对路径
+     * @returns {String} 完整的图片 URL
+     */
     getImageUrl(imagePath) {
       if (!imagePath) {
         return '';
@@ -799,15 +926,19 @@ export default {
       // 否则拼接基础URL（后端服务地址）
       return 'http://localhost:9090' + imagePath;
     },
+
+    /**
+     * 处理图片上传
+     * @param {Object} options - 上传配置对象，包含 file 文件信息
+     */
     handleUpload(options) {
+      //创建表单数据对象
       const formData = new FormData();
       formData.append('file', options.file);
-      
-      // 使用axios上传，这样可以自动添加token
-      // 注意：不需要手动设置Content-Type，让浏览器自动设置
+      //发送上传请求
       request.post('/file/upload', formData).then(response => {
         if (response.code === '0' || response.code === 0) {
-          this.form.bookPicture = response.data;
+          this.form.bookPicture = response.data;  // 保存图片路径
           ElMessage.success('图片上传成功');
         } else {
           ElMessage.error(response.msg || '图片上传失败');
@@ -817,9 +948,15 @@ export default {
         ElMessage.error('图片上传失败');
       });
     },
+
+    /**
+     * 上传前验证文件
+     * @param {File} file - 待上传的文件对象
+     * @returns {Boolean} 是否通过验证
+     */
     beforeUpload(file) {
-      const isImage = file.type.startsWith('image/');
-      const isLt5M = file.size / 1024 / 1024 < 5;
+      const isImage = file.type.startsWith('image/');  //file.type：获取文件的 MIME 类型 例如 image/jpeg 检查这个字符串是不是以 image/ 开头
+      const isLt5M = file.size / 1024 / 1024 < 5;      // 验证大小是否小于5MB
 
       if (!isImage) {
         ElMessage.error('只能上传图片文件!');
@@ -834,208 +971,228 @@ export default {
   },
   data() {
     return {
-      form: {},
-      form2: {},
-      form3: {},
-      dialogVisible: false,
-      dialogVisible2: false,
-      dialogVisibleDetail: false,
-      detailBook: {},
-      search1: '',
-      search2: '',
-      search3: '',
-      total: 10,
-      currentPage: 1,
-      pageSize: 10,
-      tableData: [],
-      user: {},
-      number: 0,
-      bookData: [],
-      isbnArray: [],
-      outDateBook: [],
-      numOfOutDataBook: 0,
-      dialogVisible3: true,
-      uploadUrl: '',
+      form: {},                    // 图书表单数据（用于新增和修改）
+      form2: {},                   // 历史借阅记录表单数据
+      form3: {},                   // 借阅记录表单数据
+      dialogVisible: false,        // 上架书籍对话框显示状态
+      dialogVisible2: false,       // 修改书籍信息对话框显示状态
+      dialogVisibleDetail: false,  // 图书详情对话框显示状态
+      detailBook: {},              // 当前查看详情的图书数据
+      search1: '',                 // 图书编号搜索条件
+      search2: '',                 // 图书名称搜索条件
+      search3: '',                 // 作者搜索条件
+      total: 10,                   // 数据总条数
+      currentPage: 1,              // 当前页码
+      pageSize: 10,                // 每页数量
+      tableData: [],               // 图书列表数据
+      user: {},                    // 当前登录用户信息
+      number: 0,                   // 当前用户借阅图书数量
+      bookData: [],                // 用户借阅记录数据
+      isbnArray: [],               // 用户已借阅图书的 ISBN 数组
+      outDateBook: [],             // 逾期图书列表
+      numOfOutDataBook: 0,         // 逾期图书数量
+      dialogVisible3: true,        // 逾期详情对话框显示状态
+      uploadUrl: '',               // 图片上传服务地址
     }
   },
 }
 </script>
 
 <style scoped>
+/* 详情页标签样式：加粗和背景色 */
 .detail-label {
   font-weight: bold;
   background-color: #f5f7fa;
 }
 
-/* 图书详情页布局 */
+/* ==================== 图书详情页布局样式 ==================== */
+/* 图书详情容器：左右分栏布局 */
 .book-detail-container {
-  display: flex;
-  gap: 30px;
-  padding: 10px 0;
+  display: flex;              /* 弹性布局 */
+  gap: 30px;                  /* 左右间距 */
+  padding: 10px 0;            /* 上下内边距 */
 }
 
+/* 图书封面区域：固定宽度 */
 .book-image-section {
-  flex: 0 0 280px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex: 0 0 280px;            /* 固定宽度280px，不伸缩 */
+  display: flex;              /* 弹性布局 */
+  flex-direction: column;     /* 垂直排列 */
+  align-items: center;        /* 水平居中 */
 }
 
+/* 图书封面图片样式 */
 .book-cover-image {
-  width: 100%;
-  max-width: 280px;
-  height: 400px;
-  border-radius: 8px;
-  border: 1px solid #e4e7ed;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  object-fit: contain;
-  background-color: #fafafa;
+  width: 100%;                /* 宽度100% */
+  max-width: 280px;           /* 最大宽度280px */
+  height: 400px;              /* 固定高度400px */
+  border-radius: 8px;         /* 圆角 */
+  border: 1px solid #e4e7ed;  /* 边框 */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);  /* 阴影效果 */
+  object-fit: contain;        /* 图片等比缩放，完整显示 */
+  background-color: #fafafa;  /* 背景色 */
 }
 
+/* 图书封面占位样式（无封面时） */
 .book-cover-placeholder {
-  width: 100%;
-  max-width: 280px;
-  height: 400px;
-  border: 2px dashed #d9d9d9;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #fafafa;
-  color: #909399;
-  gap: 10px;
+  width: 100%;                /* 宽度100% */
+  max-width: 280px;           /* 最大宽度280px */
+  height: 400px;              /* 固定高度400px */
+  border: 2px dashed #d9d9d9; /* 虚线边框 */
+  border-radius: 8px;         /* 圆角 */
+  display: flex;              /* 弹性布局 */
+  flex-direction: column;     /* 垂直排列 */
+  align-items: center;        /* 水平居中 */
+  justify-content: center;    /* 垂直居中 */
+  background-color: #fafafa;  /* 背景色 */
+  color: #909399;             /* 文字颜色 */
+  gap: 10px;                  /* 元素间距 */
 }
 
+/* 图书信息区域：占据剩余空间 */
 .book-info-section {
-  flex: 1;
-  min-width: 0;
+  flex: 1;                    /* 占据剩余空间 */
+  min-width: 0;               /* 允许内容收缩 */
 }
 
-/* 表单页面布局 */
+/* ==================== 表单页面布局样式 ==================== */
+/* 图书表单容器：左右分栏布局 */
 .book-form-container {
-  display: flex;
-  gap: 30px;
-  padding: 10px 0;
+  display: flex;              /* 弹性布局 */
+  gap: 30px;                  /* 左右间距 */
+  padding: 10px 0;            /* 上下内边距 */
 }
 
+/* 图书表单区域：占据剩余空间 */
 .book-form-section {
-  flex: 1;
-  min-width: 0;
+  flex: 1;                    /* 占据剩余空间 */
+  min-width: 0;               /* 允许内容收缩 */
 }
 
+/* 上传区域标题 */
 .upload-section-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: #606266;
-  margin-bottom: 15px;
-  text-align: center;
+  font-size: 14px;            /* 字体大小 */
+  font-weight: 500;           /* 字体粗细 */
+  color: #606266;             /* 文字颜色 */
+  margin-bottom: 15px;        /* 下边距 */
+  text-align: center;         /* 文字居中 */
 }
 
+/* 大尺寸上传组件容器 */
 .avatar-uploader-large {
-  border: 2px dashed #d9d9d9;
-  border-radius: 8px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s;
-  width: 280px;
-  height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fafafa;
+  border: 2px dashed #d9d9d9; /* 虚线边框 */
+  border-radius: 8px;         /* 圆角 */
+  cursor: pointer;            /* 鼠标悬停显示手型 */
+  position: relative;         /* 相对定位 */
+  overflow: hidden;           /* 隐藏溢出内容 */
+  transition: all 0.3s;       /* 过渡动画 */
+  width: 280px;               /* 固定宽度 */
+  height: 400px;              /* 固定高度 */
+  display: flex;              /* 弹性布局 */
+  align-items: center;        /* 垂直居中 */
+  justify-content: center;    /* 水平居中 */
+  background-color: #fafafa;  /* 背景色 */
 }
 
+/* 上传组件悬停效果 */
 .avatar-uploader-large:hover {
-  border-color: #409eff;
-  background-color: #f0f9ff;
+  border-color: #409eff;      /* 边框变蓝 */
+  background-color: #f0f9ff;  /* 背景变浅蓝 */
 }
 
+/* 上传的图片样式 */
 .avatar-large {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
+  width: 100%;                /* 宽度100% */
+  height: 100%;               /* 高度100% */
+  display: block;             /* 块级元素 */
+  object-fit: contain;        /* 图片等比缩放，完整显示 */
 }
 
+/* 上传占位区域 */
 .upload-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: #8c939d;
+  display: flex;              /* 弹性布局 */
+  flex-direction: column;     /* 垂直排列 */
+  align-items: center;        /* 水平居中 */
+  justify-content: center;    /* 垂直居中 */
+  width: 100%;                /* 宽度100% */
+  height: 100%;               /* 高度100% */
+  color: #8c939d;             /* 文字颜色 */
 }
 
+/* 上传图标样式 */
 .upload-icon {
-  font-size: 48px;
-  margin-bottom: 10px;
+  font-size: 48px;            /* 图标大小 */
+  margin-bottom: 10px;        /* 下边距 */
 }
 
+/* 上传提示文字 */
 .upload-text {
-  font-size: 14px;
-  color: #8c939d;
+  font-size: 14px;            /* 字体大小 */
+  color: #8c939d;             /* 文字颜色 */
 }
 
+/* 上传提示信息 */
 .upload-tip {
-  margin-top: 15px;
-  color: #909399;
-  font-size: 12px;
-  text-align: center;
-  line-height: 1.6;
+  margin-top: 15px;           /* 上边距 */
+  color: #909399;             /* 文字颜色 */
+  font-size: 12px;            /* 字体大小 */
+  text-align: center;         /* 文字居中 */
+  line-height: 1.6;           /* 行高 */
 }
 
-/* 保留原有的小尺寸上传组件样式（用于其他地方） */
+/* ==================== 小尺寸上传组件样式（保留用于其他地方） ==================== */
 .avatar-uploader {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s;
-  width: 178px;
-  height: 178px;
-  display: inline-block;
+  border: 1px dashed #d9d9d9; /* 虚线边框 */
+  border-radius: 6px;         /* 圆角 */
+  cursor: pointer;            /* 鼠标悬停显示手型 */
+  position: relative;         /* 相对定位 */
+  overflow: hidden;           /* 隐藏溢出内容 */
+  transition: all 0.3s;       /* 过渡动画 */
+  width: 178px;               /* 固定宽度 */
+  height: 178px;              /* 固定高度 */
+  display: inline-block;      /* 行内块级元素 */
 }
 
+/* 小尺寸上传组件悬停效果 */
 .avatar-uploader:hover {
-  border-color: #409eff;
+  border-color: #409eff;      /* 边框变蓝 */
 }
 
+/* 上传图标容器 */
 .avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
+  font-size: 28px;            /* 图标大小 */
+  color: #8c939d;             /* 图标颜色 */
+  width: 178px;               /* 宽度 */
+  height: 178px;              /* 高度 */
+  line-height: 178px;         /* 行高（垂直居中） */
+  text-align: center;         /* 文字居中 */
 }
 
+/* 头像图片样式 */
 .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-  object-fit: cover;
+  width: 178px;               /* 宽度 */
+  height: 178px;              /* 高度 */
+  display: block;             /* 块级元素 */
+  object-fit: cover;          /* 图片填充覆盖 */
 }
 
-/* 响应式设计 */
+/* ==================== 响应式设计 ==================== */
+/* 当屏幕宽度小于900px时，改为单栏布局 */
 @media (max-width: 900px) {
   .book-detail-container,
   .book-form-container {
-    flex-direction: column;
+    flex-direction: column;    /* 改为垂直排列 */
   }
-  
+
   .book-image-section {
-    flex: none;
-    width: 100%;
+    flex: none;                /* 取消弹性 */
+    width: 100%;               /* 宽度100% */
   }
-  
+
   .avatar-uploader-large {
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto;
+    width: 100%;               /* 宽度100% */
+    max-width: 280px;          /* 最大宽度280px */
+    margin: 0 auto;            /* 水平居中 */
   }
 }
 </style>
