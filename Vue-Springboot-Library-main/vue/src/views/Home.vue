@@ -1,6 +1,7 @@
 <template>
-  <div class="home-container">
-    <!-- 个人信息模块 -->
+<!-- 首页容器：包含用户信息、阅读贴士和热门推荐 -->
+<div class="home-container">
+    <!-- 个人信息模块：展示当前登录用户的基本信息 -->
     <div class="welcome-section">
       <div class="welcome-card">
         <div class="section-title">
@@ -8,20 +9,24 @@
         </div>
         <div class="welcome-info">
           <div class="info-row">
+            <!-- 用户名显示 -->
             <div class="info-item">
               <span class="info-label">用户名：</span>
               <span class="info-value">{{ user.username }}</span>
             </div>
+            <!-- 性别显示 -->
             <div class="info-item">
               <span class="info-label">性别：</span>
               <span class="info-value">{{ user.sex || '未设置' }}</span>
             </div>
           </div>
           <div class="info-row">
+            <!-- 电话显示 -->
             <div class="info-item">
               <span class="info-label">电话：</span>
               <span class="info-value">{{ user.phone || '未设置' }}</span>
             </div>
+            <!-- 地址显示 -->
             <div class="info-item">
               <span class="info-label">地址：</span>
               <span class="info-value">{{ user.address || '未设置' }}</span>
@@ -31,7 +36,7 @@
       </div>
     </div>
 
-    <!-- 阅读贴士区域 -->
+    <!-- 阅读贴士区域：展示阅读相关的温馨提示 -->
     <div class="tips-section">
       <div class="tips-card">
         <div class="section-title">
@@ -39,15 +44,17 @@
           <p>让阅读成为生活的一部分</p>
         </div>
         <div class="tips-container">
+          <!-- 左侧贴士列 -->
           <div class="tips-column">
             <div class="tip-item" v-for="(tip, index) in readingTips.slice(0, 2)" :key="index">
-              <div class="tip-bullet" :style="{ backgroundColor: tip.color }"></div>
+              <div class="tip-bullet" :style="{ backgroundColor: tip.color }"></div>  <!-- 彩色圆点 -->
               <div class="tip-text-content">
-                <strong>{{ tip.title }}</strong>
-                <span>{{ tip.text }}</span>
+                <strong>{{ tip.title }}</strong>  <!-- 贴士标题 -->
+                <span>{{ tip.text }}</span>  <!-- 贴士内容 -->
               </div>
             </div>
           </div>
+          <!-- 右侧贴士列 -->
           <div class="tips-column">
             <div class="tip-item" v-for="(tip, index) in readingTips.slice(2)" :key="index + 2">
               <div class="tip-bullet" :style="{ backgroundColor: tip.color }"></div>
@@ -61,80 +68,85 @@
       </div>
     </div>
 
-    <!-- 热门推荐区域 -->
+    <!-- 热门推荐区域：展示借阅量最高的图书 -->
     <div class="books-section">
       <div class="books-card">
         <div class="section-title">
           <h3>热门推荐</h3>
           <p>借阅量最高的图书</p>
         </div>
-        <div class="books-grid" v-loading="loading">
-          <div 
-            v-for="book in topBooks" 
-            :key="book.id" 
+        <div class="books-grid" v-loading="loading">  <!-- 加载状态 -->
+          <!-- 图书卡片：遍历热门图书列表 -->
+          <div
+            v-for="book in topBooks"
+            :key="book.id"
             class="book-card"
-            @click="showBookDetail(book)">
+            @click="showBookDetail(book)">  <!-- 点击查看详情 -->
             <div class="book-image-wrapper">
-              <el-image 
+              <!-- 图书封面图片 -->
+              <el-image
                 v-if="book.bookPicture && book.bookPicture.trim()"
-                :src="getImageUrl(book.bookPicture)" 
+                :src="getImageUrl(book.bookPicture)"
                 class="book-image"
                 fit="cover"
                 :preview-src-list="[]"
                 :hide-on-click-modal="true">
-                <template #error>
+                <template #error>  <!-- 图片加载失败时显示 -->
                   <div class="image-error">
-                    <el-icon><Picture /></el-icon>
+                    <el-icon><Picture /></el-icon>  <!-- 图片图标 -->
                   </div>
                 </template>
               </el-image>
+              <!-- 无封面时显示占位符 -->
               <div v-else class="book-image-placeholder">
                 <el-icon class="placeholder-icon"><Picture /></el-icon>
                 <span class="placeholder-text">暂无封面</span>
               </div>
               <!-- 借阅量标签 -->
               <div class="borrow-badge">
-                <el-icon><TrendCharts /></el-icon>
+                <el-icon><TrendCharts /></el-icon>  <!-- 图表图标 -->
                 <span>{{ book.borrowNum || 0 }}次借阅</span>
               </div>
             </div>
             <div class="book-info">
-              <h3 class="book-title">{{ book.name }}</h3>
-              <p class="book-author">{{ book.author }}</p>
+              <h3 class="book-title">{{ book.name }}</h3>  <!-- 图书名称 -->
+              <p class="book-author">{{ book.author }}</p>  <!-- 作者 -->
               <div class="book-meta">
+                <!-- 可借阅状态标签 -->
                 <el-tag :type="getAvailableQuantity(book) > 0 ? 'success' : 'warning'" size="small">
                   {{ getAvailableQuantity(book) > 0 ? '可借阅' : '已借完' }}
                 </el-tag>
-                <span class="book-price">¥{{ book.price }}</span>
+                <span class="book-price">¥{{ book.price }}</span>  <!-- 价格 -->
               </div>
             </div>
           </div>
-          <!-- 如果没有图书 -->
+          <!-- 如果没有图书数据 -->
           <el-empty v-if="!loading && topBooks.length === 0" description="暂无热门图书" />
         </div>
       </div>
     </div>
 
-    <!-- 图书详情对话框 -->
+    <!-- 图书详情对话框：展示图书完整信息 -->
     <el-dialog v-model="dialogVisibleDetail" title="图书详情" width="800px">
       <div class="book-detail-container">
-        <!-- 左侧图片区域 -->
+        <!-- 左侧图片区域：展示图书封面 -->
         <div class="book-image-section">
-          <el-image 
+          <el-image
             v-if="detailBook.bookPicture && detailBook.bookPicture.trim()"
-            :src="getImageUrl(detailBook.bookPicture)" 
+            :src="getImageUrl(detailBook.bookPicture)"
             class="book-cover-image"
             fit="contain"
-            :preview-src-list="[getImageUrl(detailBook.bookPicture)]"
+            :preview-src-list="[getImageUrl(detailBook.bookPicture)]"  <!-- 点击预览大图 -->
             preview-teleported
             :initial-index="0">
           </el-image>
+          <!-- 无封面时显示占位符 -->
           <div v-else class="book-cover-placeholder">
             <el-icon style="font-size: 48px; color: #c0c4cc;"><Picture /></el-icon>
             <span>暂无封面图片</span>
           </div>
         </div>
-        <!-- 右侧信息区域 -->
+        <!-- 右侧信息区域：展示图书详细信息 -->
         <div class="book-info-section">
           <el-descriptions :column="1" border>
             <el-descriptions-item label="图书编号" label-class-name="detail-label">
@@ -176,6 +188,7 @@
           </el-descriptions>
         </div>
       </div>
+      <!-- 对话框底部按钮 -->
       <template #footer>
         <span class="dialog-footer">
           <el-button type="primary" @click="dialogVisibleDetail = false">关闭</el-button>
@@ -186,34 +199,36 @@
 </template>
 
 <script>
-import request from "../utils/request";
-import { ElMessage } from "element-plus";
-import { Picture, TrendCharts, Reading, Collection, Clock, InfoFilled, User, UserFilled, Phone, Location, Male, Female } from "@element-plus/icons-vue";
+
+// 导入所需模块
+import request from "../utils/request";        // HTTP 请求工具
+import { ElMessage } from "element-plus";        // Element Plus 消息提示组件
+import { Picture, TrendCharts, Reading, Collection, Clock, InfoFilled, User, UserFilled, Phone, Location, Male, Female } from "@element-plus/icons-vue";  // Element Plus 图标组件
 
 export default {
   name: 'Home',
-  components: {
-    Picture,
-    TrendCharts,
-    Reading,
-    Collection,
-    Clock,
-    InfoFilled,
-    User,
-    UserFilled,
-    Phone,
-    Location,
-    Male,
-    Female
+  components: {  // 注册图标组件
+    Picture,         // 图片图标
+    TrendCharts,     // 图表图标
+    Reading,         // 阅读图标
+    Collection,      // 收藏图标
+    Clock,           // 时钟图标
+    InfoFilled,      // 信息图标
+    User,            // 用户图标
+    UserFilled,      // 用户填充图标
+    Phone,           // 电话图标
+    Location,        // 位置图标
+    Male,            // 男性图标
+    Female           // 女性图标
   },
   data() {
     return {
-      user: {},
-      topBooks: [],
-      loading: false,
-      dialogVisibleDetail: false,
-      detailBook: {},
-      readingTips: [
+      user: {},              // 当前登录用户信息
+      topBooks: [],          // 热门图书列表
+      loading: false,        // 加载状态
+      dialogVisibleDetail: false,  // 图书详情对话框显示状态
+      detailBook: {},        // 当前查看详情的图书信息
+      readingTips: [         // 阅读贴士数据
         {
           icon: 'Reading',
           title: '阅读改变人生',
@@ -242,18 +257,21 @@ export default {
     }
   },
   created() {
-    // 获取用户信息
+    // 从 sessionStorage 获取用户信息
     let userStr = sessionStorage.getItem("user") || "{}";
     this.user = JSON.parse(userStr);
-    this.loadTopBooks();
+    this.loadTopBooks();  // 加载热门图书
   },
   methods: {
-    // 加载热门图书
+    /**
+     * 加载热门图书列表
+     * 从后端获取借阅量最高的前5本图书
+     */
     loadTopBooks() {
       this.loading = true;
       request.get("/book/top", {
         params: {
-          limit: 5
+          limit: 5  // 获取前5本
         }
       }).then(res => {
         if (res.code === '0' || res.code === 0) {
@@ -265,15 +283,25 @@ export default {
         console.error("加载热门图书失败", error);
         ElMessage.error("加载热门图书失败");
       }).finally(() => {
-        this.loading = false;
+        this.loading = false;  // 无论成功失败都关闭加载状态
       });
     },
-    // 显示图书详情
+
+    /**
+     * 显示图书详情
+     * @param {Object} book - 图书对象
+     */
     showBookDetail(book) {
-      this.detailBook = JSON.parse(JSON.stringify(book));
-      this.dialogVisibleDetail = true;
+      this.detailBook = JSON.parse(JSON.stringify(book));  // 深拷贝图书数据
+      this.dialogVisibleDetail = true;  // 打开详情对话框
     },
-    // 获取图片URL
+
+    /**
+     * 获取图片完整URL
+     * 如果是相对路径则拼接后端地址，如果是完整URL则直接返回
+     * @param {String} imagePath - 图片路径
+     * @returns {String} 完整的图片URL
+     */
     getImageUrl(imagePath) {
       if (!imagePath) {
         return '';
@@ -285,7 +313,13 @@ export default {
       // 否则拼接基础URL（后端服务地址）
       return 'http://localhost:9090' + imagePath;
     },
-    // 计算可借阅数量
+
+    /**
+     * 计算可借阅数量
+     * 馆藏总数 - 已借出数量 = 可借阅数量
+     * @param {Object} book - 图书对象
+     * @returns {Number} 可借阅数量
+     */
     getAvailableQuantity(book) {
       if (!book.totalQuantity || !book.borrowedQuantity) {
         return book.totalQuantity || 0;
@@ -297,6 +331,7 @@ export default {
 </script>
 
 <style scoped>
+/* 首页容器样式：渐变背景 */
 .home-container {
   padding: 30px;
   min-height: calc(100vh - 60px);
@@ -676,7 +711,7 @@ export default {
   line-height: 1.5;
 }
 
-/* 响应式设计 */
+/* 响应式设计：适配移动设备 */
 @media (max-width: 768px) {
   .welcome-info {
     grid-template-columns: 1fr;
@@ -701,18 +736,21 @@ export default {
   }
 }
 
+/* 平板设备适配：每行4本 */
 @media (max-width: 1400px) {
   .book-card {
     width: calc(25% - 12px);
   }
 }
 
+/* 中等屏幕适配：每行3本 */
 @media (max-width: 1200px) {
   .book-card {
     width: calc(33.333% - 11px);
   }
 }
 
+/* 手机设备适配：每行1本 */
 @media (max-width: 480px) {
   .book-card {
     width: 100%;
