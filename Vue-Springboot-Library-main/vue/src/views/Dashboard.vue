@@ -1,4 +1,5 @@
 <template>
+  <!--展示板页面容器-->
   <div>
     <el-row :gutter="20">
       <el-col :span="6" v-for="item in cards" :key="item.title">

@@ -204,5 +204,4 @@ export default {
 </script>
 
 <style scoped>
-/* 密码修改页面样式：使用 Element Plus 默认样式 */
 </style>

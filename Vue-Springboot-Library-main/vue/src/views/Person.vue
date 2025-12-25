@@ -23,9 +23,21 @@
         <span v-if="form.role==2" style="margin:5px">读者</span>
       </el-form-item>
 
-      <!-- 电话号码输入框：可编辑的联系方式 -->
+      <!-- 电话号码输入框：可编辑的联系方式，限制最多11位数字 -->
       <el-form-item label="电话号码">
-        <el-input style="width: 80%" v-model="form.phone"></el-input>
+        <el-input
+          style="width: 80%"
+          v-model="form.phone"
+          maxlength="11"
+          show-word-limit
+          @input="form.phone = form.phone.replace(/\D/g, '')"
+          placeholder="请输入电话号码"
+        ></el-input>
+        <!--
+        限制输入最多11个字符
+        显示字数统计（如 0/11）
+        实时过滤非数字字符，只保留数字
+        -->
       </el-form-item>
 
       <!-- 性别选择：单选按钮组 -->
@@ -36,9 +48,16 @@
         </div>
       </el-form-item>
 
-      <!-- 地址输入框：多行文本输入 -->
+      <!-- 地址输入框：多行文本输入，限制最多50字 -->
       <el-form-item label="地址">
-        <el-input type="textarea" style="width: 80%" v-model="form.address"></el-input>
+        <el-input
+          type="textarea"
+          style="width: 80%"
+          v-model="form.address"
+          maxlength="50"
+          show-word-limit
+          placeholder="请输入地址（最多50字）"
+        ></el-input>
       </el-form-item>
     </el-form>
 
