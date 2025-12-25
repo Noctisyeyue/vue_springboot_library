@@ -10,6 +10,7 @@ import com.example.demo.LoginUser;
 import com.example.demo.commom.Result;
 import com.example.demo.entity.BookWithUser;
 import com.example.demo.entity.User;
+import com.example.demo.mapper.BookWithUserMapper;
 import com.example.demo.mapper.UserMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.Null;
@@ -27,6 +28,8 @@ import java.util.Map;
 public class UserController {
     @Resource
     UserMapper userMapper;
+    @Resource
+    BookWithUserMapper bookWithUserMapper;
     @PostMapping("/register")
     public Result<?> register(@RequestBody User user){
         User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
@@ -78,11 +81,35 @@ public class UserController {
     }
     @PostMapping("/deleteBatch")
     public  Result<?> deleteBatch(@RequestBody List<Integer> ids){
+        // 检查这些用户中是否有未归还图书的
+        for (Integer userId : ids) {
+            LambdaQueryWrapper<BookWithUser> wrapper = Wrappers.<BookWithUser>lambdaQuery()
+                    .eq(BookWithUser::getReaderId, userId);
+            Integer count = bookWithUserMapper.selectCount(wrapper).intValue();
+
+            if (count > 0) {
+                // 查询该用户的姓名，用于提示
+                User user = userMapper.selectById(userId);
+                String userName = user != null ? user.getNickName() : "ID:" + userId;
+                return Result.error("-1", "用户 [" + userName + "] 有未归还的图书，无法删除");
+            }
+        }
+
+        // 所有用户都可以删除，执行批量删除
         userMapper.deleteBatchIds(ids);
         return Result.success();
     }
     @DeleteMapping("/{id}")
     public Result<?> delete(@PathVariable Long id){
+        // 检查该用户是否有未归还的图书
+        LambdaQueryWrapper<BookWithUser> wrapper = Wrappers.<BookWithUser>lambdaQuery()
+                .eq(BookWithUser::getReaderId, id);
+        Integer count = bookWithUserMapper.selectCount(wrapper).intValue();
+
+        if (count > 0) {
+            return Result.error("-1", "该用户有未归还的图书，无法删除");
+        }
+
         userMapper.deleteById(id);
         return Result.success();
     }
