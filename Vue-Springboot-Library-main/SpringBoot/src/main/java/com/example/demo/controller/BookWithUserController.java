@@ -22,7 +22,7 @@ public class BookWithUserController {
     BookWithUserMapper bookWithUserMapper;
 
     /**
-     * 新增借阅记录 - 带重复检查和参数验证
+     * 借阅记录 - 带重复检查和参数验证
      */
     @PostMapping("/insertNew")
     public Result<?> insertNew(@RequestBody BookWithUser bookWithUser){

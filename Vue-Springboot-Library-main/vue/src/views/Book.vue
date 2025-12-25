@@ -479,8 +479,8 @@ export default {
      * 3. 检查逾期图书
      */
     load() {
-      this.numOfOutDataBook = 0;
-      this.outDateBook = [];
+      this.numOfOutDataBook = 0;// 重置逾期图书数量
+      this.outDateBook = [];    // 清空逾期图书列表
 
       // 第一步：获取图书分页列表
       request.get("/book", {
@@ -492,13 +492,13 @@ export default {
           search3: this.search3,
         }
       }).then(bookResponse => {
-        // 图书列表请求成功后，执行这里的代码
+        // 拿到书的数据，填入表格
         this.tableData = bookResponse.data.records;
         this.total = bookResponse.data.total;
 
         // 第二步：如果不是管理员，处理借阅和收藏状态
         if (this.user.role == 2) {
-          // 2.1 处理用户借阅和逾期信息 (这部分逻辑不变)
+          // 2.1 处理用户借阅和逾期信息 
           request.get("/bookwithuser", {
             params: {
               pageNum: "1",
@@ -511,11 +511,12 @@ export default {
             this.bookData = res.data.records;  // 存储借阅记录
             this.number = this.bookData.length;  // 当前借阅数量
             const nowDate = new Date();
-            this.isbnArray = [];
-            // 遍历借阅记录，检查逾期情况
+            this.isbnArray = [];    // 用户已借阅图书的 ISBN 数组
+            // 遍历借阅记录，检查逾期情况 记录下借了哪些书的 ISBN
             for (let i = 0; i < this.number; i++) {
               this.isbnArray[i] = this.bookData[i].isbn;
               let dDate = new Date(this.bookData[i].deadTime);
+              // 检查deadline
               if (dDate < nowDate) {
                 // 发现逾期图书，添加到逾期列表
                 this.outDateBook.push({
@@ -537,12 +538,12 @@ export default {
               pageSize: 1000 // 获取全部收藏
             }
           }).then(collectionRes => {
-            // 收藏列表请求成功后，执行这里的代码
             if (collectionRes.code === '0') {
+              // 提取收藏的图书ID  Set { 101, 105 }
               const collectedBookIds = new Set(collectionRes.data.records.map(c => c.bookId));
               // 遍历当前页的图书，设置 isCollected 状态
-              // 这里的 this.tableData 是第一步请求成功后赋的值
               this.tableData.forEach(book => {
+                // 如果这本书的 ID 在我的收藏集合里，就把它的 isCollected 设为 true
                 book.isCollected = collectedBookIds.has(book.id);
               });
             }
@@ -599,13 +600,12 @@ export default {
       }
 
       // 1) 更新图书信息：已借阅数量 -1
-      const borrowedQuantity = Math.max((row.borrowedQuantity || 0) - 1, 0);
+      const borrowedQuantity = Math.max((row.borrowedQuantity || 0) - 1, 0);//防止负数出现
       const bookUpdate = {
         id: row.id,
         borrowedQuantity,
         status: '1'
       };
-
       request.put("/book", bookUpdate).then(updateRes => {
         if (updateRes.code !== 0 && updateRes.code !== '0') {
           ElMessage.error(updateRes.msg || '更新图书状态失败');
@@ -619,7 +619,13 @@ export default {
           lendTime: borrowRecord.lendTime
         };
 
-        request.put("/LendRecord1", lendPayload).then(() => {
+        request.put("/LendRecord1", lendPayload).then(res => {
+          // 检查更新结果
+          if (res.code !== '0' && res.code !== 0) {
+            ElMessage.error(res.msg || '更新借阅历史失败');
+            return;
+          }
+
           // 3) 删除当前借阅记录（bookwithuser）
           const payload = {
             bookId: borrowRecord.bookId,
@@ -658,18 +664,18 @@ export default {
      * @param {Object} row - 当前行图书数据
      */
     handlelend(row) {
-      // 检查借阅数量限制（最多5本）
+      // 1、检查借阅数量限制（最多5本）
       if (this.number == 5) {
         ElMessage.warning("您不能再借阅更多的书籍了")
         return;
       }
-      // 检查是否有逾期图书
+      // 2、检查是否有逾期图书
       if (this.numOfOutDataBook != 0) {
         ElMessage.warning("在您归还逾期书籍前不能再借阅书籍")
         return;
       }
 
-      // 检查是否有可借阅的书
+      // 3、检查是否有可借阅的书
       if (this.getAvailableQuantity(row) <= 0) {
         ElMessage.warning("该图书暂无可借阅库存")
         return;
@@ -690,7 +696,7 @@ export default {
       form3.deadTime = moment(nowDate).format("YYYY-MM-DD HH:mm:ss");
       form3.prolong = 1;
 
-      // 先检查是否已借阅该书
+      // 4、先检查是否已借阅该书
       console.log('准备插入借阅记录:', form3)
       request.post("/bookwithuser/insertNew", form3).then(res => {
         console.log('插入借阅记录返回:', res)
@@ -700,19 +706,17 @@ export default {
           return;
         }
 
-        // 借阅成功，继续更新图书信息
+        // 5、借阅成功，继续更新图书信息
         this.form.id = row.id
         this.form.borrowNum = (row.borrowNum || 0) + 1  // 累计借阅次数 +1
         this.form.borrowedQuantity = (row.borrowedQuantity || 0) + 1  // 已借出数量 +1
-
         request.put("/book", this.form).then(bookRes => {
           if (bookRes.code == 0) {
             ElMessage.success('借阅成功')
 
-            // 添加到历史借阅记录（lend_record表）
-            // 注意：只传递后端实体类LendRecord拥有的字段
+            // 3、添加到历史借阅记录（lend_record表）
             this.form2.status = "0"  // 状态：0表示借阅中
-            this.form2.bookId = row.id  // 添加图书ID - 这是必需的字段
+            this.form2.bookId = row.id  // 添加图书ID
             this.form2.readerId = this.user.id
             this.form2.lendTime = startDate
 
