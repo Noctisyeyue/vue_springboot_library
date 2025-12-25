@@ -26,7 +26,7 @@ public interface BookWithUserMapper extends BaseMapper<BookWithUser> {
             "LEFT JOIN \"user\" u ON b.reader_id = u.id " +
             "WHERE (#{isbn} IS NULL OR #{isbn} = '' OR bk.isbn LIKE '%' || #{isbn} || '%') " +
             "AND (#{bookName} IS NULL OR #{bookName} = '' OR bk.name LIKE '%' || #{bookName} || '%') " +
-            "AND (#{readerId} IS NULL OR #{readerId} = '' OR CAST(b.reader_id AS CHAR) LIKE '%' || #{readerId} || '%')")
+            "AND (#{readerId} IS NULL OR #{readerId} = '' OR TO_CHAR(b.reader_id) LIKE '%' || #{readerId} || '%')")
     Page<BookWithUserDTO> findPageWithDetails(Page<BookWithUserDTO> page,
                                             @Param("isbn") String isbn,
                                             @Param("bookName") String bookName,

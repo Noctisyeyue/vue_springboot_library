@@ -26,9 +26,9 @@ public interface LendRecordMapper extends BaseMapper<LendRecord> {
             "FROM lend_record l " +
             "LEFT JOIN book b ON l.book_id = b.id " +
             "LEFT JOIN \"user\" u ON l.reader_id = u.id " +
-            "WHERE (#{bookId} IS NULL OR #{bookId} = '' OR CAST(l.book_id AS CHAR) LIKE '%' || #{bookId} || '%') " +
+            "WHERE (#{bookId} IS NULL OR #{bookId} = '' OR TO_CHAR(l.book_id) LIKE '%' || #{bookId} || '%') " +
             "AND (#{bookName} IS NULL OR #{bookName} = '' OR b.name LIKE '%' || #{bookName} || '%') " +
-            "AND (#{readerId} IS NULL OR #{readerId} = '' OR CAST(l.reader_id AS CHAR) LIKE '%' || #{readerId} || '%')")
+            "AND (#{readerId} IS NULL OR #{readerId} = '' OR TO_CHAR(l.reader_id) LIKE '%' || #{readerId} || '%')")
     Page<LendRecordDTO> findPageWithDetails(Page<LendRecordDTO> page,
                                            @Param("bookId") String bookId,
                                            @Param("bookName") String bookName,
