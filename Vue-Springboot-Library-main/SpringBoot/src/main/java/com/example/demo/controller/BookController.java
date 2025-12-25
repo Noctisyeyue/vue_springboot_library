@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.commom.Result;
 import com.example.demo.entity.Book;
+import com.example.demo.entity.BookCollection;
+import com.example.demo.entity.LendRecord;
+import com.example.demo.mapper.BookCollectionMapper;
 import com.example.demo.mapper.BookMapper;
+import com.example.demo.mapper.LendRecordMapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -17,6 +21,10 @@ import java.util.List;
 public class BookController {
     @Resource
     BookMapper bookMapper;
+    @Resource
+    BookCollectionMapper bookCollectionMapper;
+    @Resource
+    LendRecordMapper lendRecordMapper;
 
     //接收前端传来的一个JSON格式的 Book 对象
     @PostMapping
@@ -98,6 +106,20 @@ public class BookController {
             }
         }
 
+        // 先删除相关的收藏记录（避免外键约束错误）
+        for(Integer id : ids){
+            LambdaQueryWrapper<BookCollection> wrapper1 = Wrappers.<BookCollection>lambdaQuery();
+            wrapper1.eq(BookCollection::getBookId, id);
+            bookCollectionMapper.delete(wrapper1);
+        }
+
+        // 删除相关的借阅历史记录（避免外键约束错误）
+        for(Integer id : ids){
+            LambdaQueryWrapper<LendRecord> wrapper2 = Wrappers.<LendRecord>lambdaQuery();
+            wrapper2.eq(LendRecord::getBookId, id);
+            lendRecordMapper.delete(wrapper2);
+        }
+
         bookMapper.deleteBatchIds(ids);
         return Result.success();
     }
@@ -109,6 +131,16 @@ public class BookController {
         if(book != null && book.getBorrowedQuantity() != null && book.getBorrowedQuantity() > 0){
             return Result.error("该图书仍有借阅记录，无法删除");
         }
+
+        // 先删除相关的收藏记录（避免外键约束错误）
+        LambdaQueryWrapper<BookCollection> wrapper1 = Wrappers.<BookCollection>lambdaQuery();
+        wrapper1.eq(BookCollection::getBookId, id);
+        bookCollectionMapper.delete(wrapper1);
+
+        // 删除相关的借阅历史记录（避免外键约束错误）
+        LambdaQueryWrapper<LendRecord> wrapper2 = Wrappers.<LendRecord>lambdaQuery();
+        wrapper2.eq(LendRecord::getBookId, id);
+        lendRecordMapper.delete(wrapper2);
 
         bookMapper.deleteById(id);
         return Result.success();
@@ -137,7 +169,7 @@ public class BookController {
         return Result.success(bookPage);
     }
 
-    // 新增：获取图书详情
+    // 获取图书详情
     @GetMapping("/{id}")
     public Result<?> getById(@PathVariable Long id){
         Book book = bookMapper.selectById(id);
