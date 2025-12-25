@@ -8,9 +8,13 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.LoginUser;
 import com.example.demo.commom.Result;
+import com.example.demo.entity.BookCollection;
 import com.example.demo.entity.BookWithUser;
+import com.example.demo.entity.LendRecord;
 import com.example.demo.entity.User;
+import com.example.demo.mapper.BookCollectionMapper;
 import com.example.demo.mapper.BookWithUserMapper;
+import com.example.demo.mapper.LendRecordMapper;
 import com.example.demo.mapper.UserMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.Null;
@@ -30,6 +34,10 @@ public class UserController {
     UserMapper userMapper;
     @Resource
     BookWithUserMapper bookWithUserMapper;
+    @Resource
+    LendRecordMapper lendRecordMapper;
+    @Resource
+    BookCollectionMapper bookCollectionMapper;
     @PostMapping("/register")
     public Result<?> register(@RequestBody User user){
         User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
@@ -95,7 +103,6 @@ public class UserController {
             }
         }
 
-        // 所有用户都可以删除，执行批量删除
         userMapper.deleteBatchIds(ids);
         return Result.success();
     }
