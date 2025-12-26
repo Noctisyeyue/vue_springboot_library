@@ -83,4 +83,26 @@ const router = createRouter({
   routes
 })
 
+// 全局前置守卫：在路由跳转前进行权限验证
+router.beforeEach((to, _from, next) => {
+  // 定义不需要登录就可以访问的页面（白名单）
+  const whiteList = ['/login', '/register']
+
+  // 从 sessionStorage 获取用户信息
+  const userStr = sessionStorage.getItem("user")
+  // userStr 存在且不是空/nul
+  const hasUser = userStr && userStr !== '{}' && userStr !== 'null'
+
+  // 如果要访问的是白名单页面，直接放行
+  if (whiteList.includes(to.path)) {
+    next()
+  } else if (hasUser) {
+    // 如果已登录，放行
+    next()
+  } else {
+    // 未登录且要访问非白名单页面，强制跳转到登录页
+    next('/login')
+  }
+})
+
 export default router
