@@ -94,8 +94,8 @@ export default {
           },
           {
             min: 3,               // 最小长度
-            max: 12,              // 最大长度
-            message: '长度要求为3到12位',  // 长度验证失败时的提示信息
+            max: 20,              // 最大长度
+            message: '长度要求为3到20位',  // 长度验证失败时的提示信息
             trigger: 'blur',      // 失去焦点时触发验证
           },
         ],
@@ -104,6 +104,12 @@ export default {
             required: true,        // 必填字段
             message: '请输入密码',  // 验证失败时的提示信息
             trigger: 'blur',       // 失去焦点时触发验证
+          },
+          {
+            min: 3,               // 最小长度
+            max: 12,              // 最大长度
+            message: '长度要求为3到12位',  // 长度验证失败时的提示信息
+            trigger: 'blur',      // 失去焦点时触发验证
           }
         ],
         confirm: [

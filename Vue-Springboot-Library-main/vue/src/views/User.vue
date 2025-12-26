@@ -110,17 +110,41 @@
   <el-form :model="form" label-width="120px">
     <!-- 用户名输入框 -->
     <el-form-item label="用户名">
-      <el-input style="width: 80%" v-model="form.username"></el-input>
+        <el-input
+          style="width: 80%"
+          v-model="form.username"
+          maxlength="20"
+          show-word-limit
+          placeholder="请输入姓名（最多20字）"
+        ></el-input>
     </el-form-item>
 
     <!-- 昵称输入框 -->
     <el-form-item label="昵称">
-      <el-input style="width: 80%" v-model="form.nickName"></el-input>
+        <el-input
+          style="width: 80%"
+          v-model="form.nickName"
+          maxlength="20"
+          show-word-limit
+          placeholder="请输入姓名（最多20字）"
+        ></el-input>
     </el-form-item>
 
     <!-- 电话号码输入框 -->
     <el-form-item label="电话号码">
-      <el-input style="width: 80%" v-model="form.phone"></el-input>
+              <el-input
+          style="width: 80%"
+          v-model="form.phone"
+          maxlength="11"
+          show-word-limit
+          @input="form.phone = form.phone.replace(/\D/g, '')"
+          placeholder="请输入电话号码"
+        ></el-input>
+        <!--
+        限制输入最多11个字符
+        显示字数统计（如 0/11）
+        实时过滤非数字字符，只保留数字
+        -->
     </el-form-item>
 
     <!-- 性别选择：单选按钮组 -->
@@ -133,7 +157,14 @@
 
     <!-- 地址输入框：多行文本 -->
     <el-form-item label="地址">
-      <el-input type="textarea" style="width: 80%" v-model="form.address"></el-input>
+        <el-input
+          type="textarea"
+          style="width: 80%"
+          v-model="form.address"
+          maxlength="50"
+          show-word-limit
+          placeholder="请输入地址（最多50字）"
+        ></el-input>
     </el-form-item>
   </el-form>
 

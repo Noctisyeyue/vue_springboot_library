@@ -282,19 +282,19 @@
           <div class="book-form-section">
             <el-form :model="form" label-width="100px">
               <el-form-item label="图书编号">
-                <el-input v-model="form.isbn" placeholder="请输入图书编号"></el-input>
+                <el-input v-model="form.isbn" maxlength="50" show-word-limit placeholder="请输入图书编号（最多50字）"></el-input>
               </el-form-item>
               <el-form-item label="图书名称">
-                <el-input v-model="form.name" placeholder="请输入图书名称"></el-input>
+                <el-input v-model="form.name" maxlength="100" show-word-limit placeholder="请输入图书名称（最多100字）"></el-input>
               </el-form-item>
               <el-form-item label="价格">
-                <el-input v-model="form.price" placeholder="请输入价格"></el-input>
+                <el-input v-model="form.price" @input="form.price = form.price.replace(/[^\d.]/g, '').replace(/^(\-)*(\d+)\.(\d{0,2}).*$/, '$1$2.$3')" placeholder="请输入价格"></el-input>
               </el-form-item>
               <el-form-item label="作者">
-                <el-input v-model="form.author" placeholder="请输入作者"></el-input>
+                <el-input v-model="form.author" maxlength="50" show-word-limit placeholder="请输入作者（最多50字）"></el-input>
               </el-form-item>
               <el-form-item label="出版社">
-                <el-input v-model="form.publisher" placeholder="请输入出版社"></el-input>
+                <el-input v-model="form.publisher" maxlength="100" show-word-limit placeholder="请输入出版社（最多100字）"></el-input>
               </el-form-item>
               <el-form-item label="出版时间">
                 <el-date-picker
@@ -348,19 +348,19 @@
           <div class="book-form-section">
             <el-form :model="form" label-width="100px">
               <el-form-item label="图书编号">
-                <el-input v-model="form.isbn" placeholder="请输入图书编号"></el-input>
+                <el-input v-model="form.isbn" maxlength="50" show-word-limit placeholder="请输入图书编号（最多50字）"></el-input>
               </el-form-item>
               <el-form-item label="图书名称">
-                <el-input v-model="form.name" placeholder="请输入图书名称"></el-input>
+                <el-input v-model="form.name" maxlength="100" show-word-limit placeholder="请输入图书名称（最多100字）"></el-input>
               </el-form-item>
               <el-form-item label="价格">
-                <el-input v-model="form.price" placeholder="请输入价格"></el-input>
+                <el-input v-model="form.price" @input="form.price = form.price.replace(/[^\d.]/g, '').replace(/^(\-)*(\d+)\.(\d{0,2}).*$/, '$1$2.$3')" placeholder="请输入价格"></el-input>
               </el-form-item>
               <el-form-item label="作者">
-                <el-input v-model="form.author" placeholder="请输入作者"></el-input>
+                <el-input v-model="form.author" maxlength="50" show-word-limit placeholder="请输入作者（最多50字）"></el-input>
               </el-form-item>
               <el-form-item label="出版社">
-                <el-input v-model="form.publisher" placeholder="请输入出版社"></el-input>
+                <el-input v-model="form.publisher" maxlength="100" show-word-limit placeholder="请输入出版社（最多100字）"></el-input>
               </el-form-item>
               <el-form-item label="出版时间">
               <!--Element Plus 的日期选择器-->

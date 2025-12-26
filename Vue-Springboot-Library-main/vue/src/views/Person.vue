@@ -14,7 +14,13 @@
 
       <!-- 姓名输入框：可编辑的用户真实姓名 -->
       <el-form-item label="姓名">
-        <el-input style="width: 80%" v-model="form.nickName"></el-input>
+        <el-input
+          style="width: 80%"
+          v-model="form.nickName"
+          maxlength="20"
+          show-word-limit
+          placeholder="请输入姓名（最多20字）"
+        ></el-input>
       </el-form-item>
 
       <!-- 权限显示：根据角色显示管理员或读者 -->
