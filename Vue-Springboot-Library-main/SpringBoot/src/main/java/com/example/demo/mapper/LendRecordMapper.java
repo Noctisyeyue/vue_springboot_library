@@ -21,12 +21,12 @@ public interface LendRecordMapper extends BaseMapper<LendRecord> {
      */
     @Select("SELECT " +
             "l.reader_id, l.book_id, l.lend_time, l.return_time, l.status, " +
-            "b.isbn, b.name as bookName, b.author, b.publisher, " +
+            "b.ISBN as isbn, b.name as bookName, b.author, b.publisher, " +
             "u.nick_name " +
             "FROM lend_record l " +
             "LEFT JOIN book b ON l.book_id = b.id " +
             "LEFT JOIN \"user\" u ON l.reader_id = u.id " +
-            "WHERE (#{bookId} IS NULL OR #{bookId} = '' OR TO_CHAR(l.book_id) LIKE '%' || #{bookId} || '%') " +
+            "WHERE (#{bookId} IS NULL OR #{bookId} = '' OR b.ISBN LIKE '%' || #{bookId} || '%') " +
             "AND (#{bookName} IS NULL OR #{bookName} = '' OR b.name LIKE '%' || #{bookName} || '%') " +
             "AND (#{readerId} IS NULL OR #{readerId} = '' OR TO_CHAR(l.reader_id) LIKE '%' || #{readerId} || '%')")
     Page<LendRecordDTO> findPageWithDetails(Page<LendRecordDTO> page,

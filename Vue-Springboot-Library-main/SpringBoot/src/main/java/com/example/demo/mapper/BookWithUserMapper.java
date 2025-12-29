@@ -19,12 +19,12 @@ public interface BookWithUserMapper extends BaseMapper<BookWithUser> {
      */
     @Select("SELECT " +
             "b.record_id, b.reader_id, b.book_id, b.lend_time, b.dead_time, b.prolong, " +
-            "bk.isbn, bk.name as bookName, bk.author, bk.publisher, " +
+            "bk.ISBN as isbn, bk.name as bookName, bk.author, bk.publisher, " +
             "u.nick_name " +
             "FROM bookwithuser b " +
             "LEFT JOIN book bk ON b.book_id = bk.id " +
             "LEFT JOIN \"user\" u ON b.reader_id = u.id " +
-            "WHERE (#{isbn} IS NULL OR #{isbn} = '' OR bk.isbn LIKE '%' || #{isbn} || '%') " +
+            "WHERE (#{isbn} IS NULL OR #{isbn} = '' OR bk.ISBN LIKE '%' || #{isbn} || '%') " +
             "AND (#{bookName} IS NULL OR #{bookName} = '' OR bk.name LIKE '%' || #{bookName} || '%') " +
             "AND (#{readerId} IS NULL OR #{readerId} = '' OR TO_CHAR(b.reader_id) LIKE '%' || #{readerId} || '%')")
     Page<BookWithUserDTO> findPageWithDetails(Page<BookWithUserDTO> page,
