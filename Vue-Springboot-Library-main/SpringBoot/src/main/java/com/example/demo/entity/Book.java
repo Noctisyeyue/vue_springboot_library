@@ -12,10 +12,13 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
-//表明这个类对应数据库中名为 book 的表
+
+/**
+ * 图书实体类，对应数据库 book 表
+ * 核心用途：封装图书基础信息与可借阅数量计算逻辑
+ */
 @TableName("book")
 @Data
-
 public class Book {
 
     @TableId (type = IdType.AUTO)
@@ -29,11 +32,15 @@ public class Book {
     @JsonFormat(locale="zh",timezone="GMT+8", pattern="yyyy-MM-dd")
     private Date createTime;
     private String status;
-    private Integer  totalQuantity;//图书总数量
-    private Integer  borrowedQuantity;//已借阅数量
-    private String bookPicture;//图书图片路径
+    private Integer totalQuantity;      // 图书总数量
+    private Integer borrowedQuantity;   // 已借阅数量
+    private String bookPicture;         // 图书图片路径
 
-    // 计算可借阅数量的方法（非数据库字段）
+    /**
+     * 计算可借阅数量（非数据库字段）
+     * 核心逻辑：总数量减去已借阅数量，处理空值避免空指针异常
+     * @return 可借阅数量，如果字段为空则返回0
+     */
     public Integer getAvailableQuantity() {
         if (totalQuantity == null || borrowedQuantity == null) {
             return 0;

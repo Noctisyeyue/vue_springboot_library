@@ -8,16 +8,21 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+/**
+ * 图书收藏数据访问接口
+ * 核心用途：提供图书收藏记录的基础CRUD操作和多表关联查询
+ */
 @Mapper
 public interface BookCollectionMapper extends BaseMapper<BookCollection> {
 
     /**
      * 多表关联查询收藏记录（带分页和搜索条件）
-     * @param page 分页对象
-     * @param readerId 读者ID
-     * @param search1 搜索条件（图书名称）
-     * @param search2 搜索条件（作者）
-     * @return 收藏记录DTO列表
+     * 核心逻辑：LEFT JOIN关联book表，支持按图书名称、作者模糊查询，按收藏时间降序排列
+     * @param page 分页对象，包含页码和每页条数
+     * @param readerId 读者ID（必填），用于查询指定用户的收藏记录
+     * @param search1 模糊匹配参数：图书名称，为空则不限制
+     * @param search2 模糊匹配参数：图书作者，为空则不限制
+     * @return Page<BookCollectionDTO> 包含分页信息的收藏记录DTO列表
      */
     @Select("SELECT " +
             "c.id, c.reader_id, c.book_id, c.collection_time, " +

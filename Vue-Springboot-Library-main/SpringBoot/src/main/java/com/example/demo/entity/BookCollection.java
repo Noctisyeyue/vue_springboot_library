@@ -8,7 +8,10 @@ import lombok.Data;
 
 import java.util.Date;
 
-// 3NF规范化后的图书收藏表实体类 - 只包含关联字段
+/**
+ * 图书收藏实体类，对应数据库 book_collection 表
+ * 核心用途：记录用户收藏的图书信息，支持收藏和取消收藏功能
+ */
 @TableName("book_collection")
 @Data
 public class BookCollection {

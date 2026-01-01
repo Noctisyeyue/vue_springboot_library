@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.example.demo.LoginUser;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.example.demo.utils.LoginUser;
 import com.example.demo.commom.Result;
 import com.example.demo.entity.Book;
 import com.example.demo.entity.LendRecord;
@@ -17,6 +17,10 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 数据统计控制器
+ * 核心用途：提供Dashboard数据统计接口，返回系统核心指标
+ */
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController {
@@ -26,21 +30,27 @@ public class DashboardController {
     private LendRecordMapper lendRecordMapper;
     @Resource
     private BookMapper bookMapper;
+
+    /**
+     * 获取Dashboard统计数据
+     * 核心逻辑：统计总访问量、用户总数、借阅记录总数、图书总数
+     * @return Result<Map<String, Object>> 包含visitCount、userCount、lendRecordCount、bookCount的响应对象
+     */
     @GetMapping
-    public  Result<?> dashboardrecords(){
+    public Result<?> dashboardrecords(){
         int visitCount = LoginUser.getVisitCount();
 
-        QueryWrapper<User> queryWrapper1=new QueryWrapper();//查询条件
-        int userCount = userMapper.selectCount(queryWrapper1);//用户表记录数量；
+        LambdaQueryWrapper<User> queryWrapper1 = Wrappers.<User>lambdaQuery();
+        int userCount = userMapper.selectCount(queryWrapper1);
 
-        QueryWrapper<LendRecord> queryWrapper2=new QueryWrapper();
-        int lendRecordCount = lendRecordMapper.selectCount(queryWrapper2);//借阅记录数量
+        LambdaQueryWrapper<LendRecord> queryWrapper2 = Wrappers.<LendRecord>lambdaQuery();
+        int lendRecordCount = lendRecordMapper.selectCount(queryWrapper2);
 
-        QueryWrapper<Book> queryWrapper3=new QueryWrapper();
-        int bookCount = bookMapper.selectCount(queryWrapper3);//图书数量
+        LambdaQueryWrapper<Book> queryWrapper3 = Wrappers.<Book>lambdaQuery();
+        int bookCount = bookMapper.selectCount(queryWrapper3);
 
-        Map<String, Object> map = new HashMap<>();//键值对形式
-        map.put("visitCount", visitCount);//放置visitCount到map中
+        Map<String, Object> map = new HashMap<>();
+        map.put("visitCount", visitCount);
         map.put("userCount", userCount);
         map.put("lendRecordCount", lendRecordCount);
         map.put("bookCount", bookCount);

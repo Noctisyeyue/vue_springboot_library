@@ -1,7 +1,6 @@
 package com.example.demo.utils;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.json.JSONUtil;
 
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
@@ -16,7 +15,11 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
-@Slf4j
+/**
+ * JWT Token工具类
+ * 核心用途：提供JWT token的生成和解析功能，用于用户身份认证
+ */
+@Slf4j// Lombok注解，自动生成日志记录器
 @Component
 public class TokenUtils {
 
@@ -31,9 +34,10 @@ public class TokenUtils {
     }
 
     /**
-     * 生成token
-     * @param user
-     * @return
+     * 生成JWT token
+     * 核心逻辑：使用用户ID作为audience，用户密码作为签名密钥，有效期1天
+     * @param user 用户对象，包含id和password字段
+     * @return String JWT token字符串
      */
     public static String genToken(User user) {
         return JWT.create()
@@ -43,8 +47,9 @@ public class TokenUtils {
     }
 
     /**
-     * 获取token中的用户信息
-     * @return
+     * 从请求头获取token并解析用户信息
+     * 核心逻辑：从请求头获取token，解析用户ID，查询用户信息
+     * @return User 用户对象，解析失败返回null
      */
     public static User getUser() {
         try {

@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+/**
+ * 文件上传控制器
+ * 核心用途：提供文件上传接口，支持图片格式验证和大小限制
+ */
 @RestController
 @RequestMapping("/file")
 @CrossOrigin
@@ -18,20 +22,25 @@ public class FileController {
     @Value("${file.upload.path:}")
     private String uploadPath;
 
+    /**
+     * 上传文件（含文件类型和大小验证）
+     * 核心逻辑：验证文件类型（仅支持图片格式）、文件大小（限制5MB）、生成唯一文件名并保存
+     * @param file 上传的文件对象
+     * @return Result<String> 文件访问路径，失败返回错误信息
+     */
     @PostMapping("/upload")
     public Result<?> upload(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return Result.error("文件不能为空");
         }
 
-        // 检查文件类型
+        // 验证文件类型
         String originalFilename = file.getOriginalFilename();
         String suffix = "";
         if (originalFilename != null && originalFilename.contains(".")) {
             suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
         
-        // 允许的图片格式
         String[] allowedTypes = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
         boolean isValidType = false;
         for (String type : allowedTypes) {
@@ -45,7 +54,7 @@ public class FileController {
             return Result.error("只支持图片格式：jpg, jpeg, png, gif, bmp, webp");
         }
 
-        // 检查文件大小（限制为5MB）
+        // 验证文件大小（限制5MB）
         if (file.getSize() > 5 * 1024 * 1024) {
             return Result.error("文件大小不能超过5MB");
         }
@@ -54,10 +63,8 @@ public class FileController {
             // 确定上传目录路径
             File uploadDir;
             if (uploadPath != null && !uploadPath.isEmpty()) {
-                // 如果配置了路径，使用配置的路径
                 uploadDir = new File(uploadPath);
             } else {
-                // 否则使用项目根目录下的files文件夹
                 String projectRoot = System.getProperty("user.dir");
                 uploadDir = Paths.get(projectRoot, "files").toFile();
             }
@@ -72,12 +79,10 @@ public class FileController {
 
             // 生成唯一文件名
             String fileName = UUID.randomUUID().toString() + suffix;
+            // 将上传文件保存到目标位置
             File destFile = new File(uploadDir, fileName);
-
-            // 保存文件
             file.transferTo(destFile);
 
-            // 返回文件访问路径
             String filePath = "/files/" + fileName;
             return Result.success(filePath);
         } catch (IOException e) {

@@ -5,8 +5,10 @@ import lombok.Data;
 
 import java.util.Date;
 
-// 图书收藏DTO - 包含关联查询的图书信息
-// 把从多个表查询的数据包装成一个对象，方便返回给前端
+/**
+ * 图书收藏DTO
+ * 核心用途：封装多表关联查询结果，包含收藏记录、图书信息，便于前端展示
+ */
 @Data
 public class BookCollectionDTO {
     private Long id;           // 收藏记录ID

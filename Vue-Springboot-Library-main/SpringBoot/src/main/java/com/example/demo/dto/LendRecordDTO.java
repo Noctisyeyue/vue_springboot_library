@@ -5,8 +5,10 @@ import lombok.Data;
 
 import java.util.Date;
 
-// 借阅历史记录DTO - 包含关联查询的图书信息和用户信息
-// 把从多个表查询的数据包装成一个对象，方便返回给前端
+/**
+ * 借阅历史记录DTO
+ * 核心用途：封装多表关联查询结果，包含借阅历史、图书信息、用户信息，便于前端展示
+ */
 @Data
 public class LendRecordDTO {
     private Long readerId;     // 读者ID

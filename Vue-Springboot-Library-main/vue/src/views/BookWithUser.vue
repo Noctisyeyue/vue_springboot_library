@@ -230,14 +230,14 @@ export default {
         })
       }
       else {
-        // 普通用户查询自己的借阅记录（search3设为用户ID）
+        // 普通用户查询自己的借阅记录（search3设为用户名称）
         request.get("/bookwithuser", {
           params: {
             pageNum: this.currentPage,
             pageSize: this.pageSize,
             search1: this.search1,
             search2: this.search2,
-            search3: this.user.id,
+            search3: this.user.nickName,
           }
         }).then(res => {
           console.log(res)
@@ -528,7 +528,7 @@ export default {
       dialogVisible2: false,  // 修改借阅信息对话框显示状态
       search1: '',      // 搜索条件1：图书编号
       search2: '',      // 搜索条件2：图书名称
-      search3: '',      // 搜索条件3：借阅者（管理员用）或用户ID（普通用户用）
+      search3: '',      // 搜索条件3：借阅者（管理员用）或用户名称（普通用户用）
       total: 10,        // 数据总条数
       currentPage: 1,   // 当前页码
       pageSize: 10,     // 每页显示数量

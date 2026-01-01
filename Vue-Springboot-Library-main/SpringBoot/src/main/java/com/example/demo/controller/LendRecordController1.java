@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.demo.commom.Result;
 import com.example.demo.entity.Book;
 import com.example.demo.entity.LendRecord;
@@ -25,23 +27,22 @@ public class LendRecordController1 {
     @PutMapping
     public Result<?> updateReturn(@RequestBody LendRecord lendRecord) {
         // 根据ISBN查询图书ID
-        QueryWrapper<Book> bookQuery = new QueryWrapper<>();
-        bookQuery.eq("isbn", lendRecord.getIsbn());
+        LambdaQueryWrapper<Book> bookQuery = Wrappers.<Book>lambdaQuery()
+                .eq(Book::getIsbn, lendRecord.getIsbn());
         Book book = bookMapper.selectOne(bookQuery);
 
         if (book == null) {
             return Result.error("归还失败：未找到对应的图书");
         }
 
-        // 使用UpdateWrapper直接更新未归还的记录
-        com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper<LendRecord> updateWrapper =
-                new com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper<>();
-        updateWrapper.eq("reader_id", lendRecord.getReaderId())
-                .eq("book_id", book.getId())
-                .eq("lend_time", lendRecord.getLendTime()) // 添加lendTime条件
-                .eq("status", "0") // 只更新未归还的记录
-                .set("return_time", new Date())
-                .set("status", "1");
+        // 使用LambdaUpdateWrapper直接更新未归还的记录
+        LambdaUpdateWrapper<LendRecord> updateWrapper = Wrappers.<LendRecord>lambdaUpdate()
+                .eq(LendRecord::getReaderId, lendRecord.getReaderId())
+                .eq(LendRecord::getBookId, book.getId())
+                .eq(LendRecord::getLendTime, lendRecord.getLendTime()) // 添加lendTime条件
+                .eq(LendRecord::getStatus, "0") // 只更新未归还的记录
+                .set(LendRecord::getReturnTime, new Date())
+                .set(LendRecord::getStatus, "1");
 
         int result = lendRecordMapper.update(null, updateWrapper);
 
@@ -52,3 +53,4 @@ public class LendRecordController1 {
         }
     }
 }
+

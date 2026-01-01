@@ -8,7 +8,10 @@ import lombok.Data;
 
 import java.util.Date;
 
-// 3NF规范化后的当前借阅表实体类 - 只包含关联字段
+/**
+ * 当前借阅实体类，对应数据库 bookwithuser 表
+ * 核心用途：记录用户当前未归还的借阅信息，支持续借功能
+ */
 @TableName("bookwithuser")
 @Data
 public class BookWithUser {
