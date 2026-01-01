@@ -278,46 +278,29 @@ export default {
       })
     },
 
-    /**
-     * 新增用户方法
-     * 打开编辑对话框，清空表单数据
-     */
-    add() {
-      this.dialogVisible = true  // 显示对话框
-      this.form = {}            // 清空表单数据
-    },
 
     /**
-     * 保存用户信息方法
-     * 根据是否有ID判断是新增还是更新操作
+     * 保存用户信息方法（仅更新操作）
      */
     save() {
-      if (this.form.id) {  // 更新操作
-        request.put("/user", this.form).then(res => {
-          console.log(res)
-          if (res.code == 0) {
-            ElMessage({
-              message: '更新成功',
-              type: 'success',
-            })
-          } else {
-            ElMessage.error(res.msg)
-          }
-          this.load()           // 重新加载数据
-          this.dialogVisible = false  // 关闭对话框
-        })
-      } else {  // 新增操作
-        request.post("/user", this.form).then(res => {
-          console.log(res)
-          if (res.code == 0) {
-            ElMessage.success('添加成功')
-          } else {
-            ElMessage.error(res.msg)
-          }
-          this.load()           // 重新加载数据
-          this.dialogVisible = false  // 关闭对话框
-        })
+      if (!this.form.id) {
+        ElMessage.error("非法操作：无法新增用户")
+        return
       }
+      // 更新操作
+      request.put("/user", this.form).then(res => {
+        console.log(res)
+        if (res.code == 0) {
+          ElMessage({
+            message: '更新成功',
+            type: 'success',
+          })
+        } else {
+          ElMessage.error(res.msg)
+        }
+        this.load()           // 重新加载数据
+        this.dialogVisible = false  // 关闭对话框
+      })
     },
 
     /**
